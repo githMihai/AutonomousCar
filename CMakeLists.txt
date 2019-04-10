@@ -15,6 +15,7 @@ set(SOURCE_FILES
     ./src/serialhandler/messageconverter.cpp 
     ./src/serialhandler/serialhandler.cpp 
     ./src/socket/socket.cpp
+    # ./lib/serial/src/serial.cc
 )
 # ===================================
 
@@ -25,7 +26,9 @@ include_directories(
     ./include/socket
     ./src
     ./lib/serial
+    ${JSONCPPPATH}/include
 )
+add_subdirectory(${CMAKE_SOURCE_DIR}/lib/serial)
 # ===================================
 
 # ========FILES TO BE COMPILED=======
@@ -46,16 +49,29 @@ include( CPack )
 # Add link to pthread
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+
 FIND_PACKAGE(Threads REQUIRED)  
+FIND_PACKAGE(PkgConfig REQUIRED)
+
+pkg_check_modules(JSONCPP jsoncpp)
+link_libraries(${JSONCPP_LIBRARIES})
+
+# pkg_check_modules(SERIAL serial)
+# link_libraries(${SERIAL_LIBRARIES})
 
 # Add libserial.so
-add_library(serial SHARED IMPORTED)
-set_target_properties(serial PROPERTIES
-    IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/lib/serial/libserial.so"
-    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/lib/serial"
-)
+# add_library(serial SHARED IMPORTED)
+# set_target_properties(serial PROPERTIES
+#     IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/lib/serial/build/libserial.so"
+#     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/lib/serial/include"
+# )
+
+add_dependencies (${PROJECT_NAME} serial)
 
 # Linking
 target_link_libraries( ${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} )
+# target_link_libraries( ${PROJECT_NAME} serial )
+target_link_libraries( ${PROJECT_NAME} ${JSONCPP_LIBRARIES} )
 target_link_libraries( ${PROJECT_NAME} serial )
+# target_link_libraries( ${PROJECT_NAME} serial )
 # ===================================

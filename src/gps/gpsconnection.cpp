@@ -45,8 +45,8 @@ GPSConnection::GPSConnection(int carID, uint16_t negotiationPort)
     this->carSubscriptionPort = this->negotiationPort + 2;
     this->carCommunicationPort = this->carSubscriptionPort + 2;
     this->maxWaitTimeForServer = 10;
-    this->carPos = 0. + 0i;
-    this->carOrientation = 0. + 0i;
+    this->carPos = std::complex<double>(0,0);
+    this->carOrientation = std::complex<double>(0,0);
     this->newServerIP = false;
     this->startUp = true;
     this->GSocketPoz = Socket(AF_INET, SOCK_STREAM, 0);

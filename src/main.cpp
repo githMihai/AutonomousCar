@@ -7,6 +7,7 @@
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <json/json.h>
 
 //#include <boost/algorithm/string/classification.hpp>
 //#include <boost/algorithm/string/split.hpp>
