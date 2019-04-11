@@ -13,7 +13,13 @@
 //#include <boost/algorithm/string/split.hpp>
 
 #include "socket.h"
+#include "map.h"
 #include <regex>
+#include <fstream>
+#include <streambuf>
+#include <functional>
+#include <stdio.h>
+#include <string>
 
 //void run_cmd( const std::string& cmd, std::vector<std::string>& out ){
 //    FILE*  fp;
@@ -251,18 +257,20 @@ int main()
 //    return 0;
 //}
 
+// TODO
 int main(int argc, char *argv[])
 {
-//    GPSConnection* g = new GPSConnection(4, 12346);
-    GPSConnection *g = new GPSConnection(4, 12346);
-//    g.run();
-    GPSData gpsData = GPSData(4, std::complex<double>(0,0), std::complex<double>(0,0));
-    std::thread run (&GPSConnection::getServer, g);
-    std::thread getPoz (&GPSConnection::getPositionData, g, &gpsData);
+// //    GPSConnection* g = new GPSConnection(4, 12346);
+//     GPSConnection *g = new GPSConnection(4, 12346);
+// //    g.run();
+//     GPSData gpsData = GPSData(4, std::complex<double>(0,0), std::complex<double>(0,0));
+//     std::thread run (&GPSConnection::getServer, g);
+//     std::thread getPoz (&GPSConnection::getPositionData, g, &gpsData);
 
-    run.join();
-    getPoz.join();
+//     run.join();
+//     getPoz.join();
 
+// TODO
 ////    std::string msg = "id:4;Pos:(-99.80+-6.28j);Azm:(-99.21+-12.53j)";
 //    std::string msg = "Pos:(-99.21+-12.53j)";
 
@@ -304,6 +312,32 @@ int main(int argc, char *argv[])
 //            std::cout << sm[i] << std::endl;
 //        }
 //    }
+
+    const std::string JSON_PATH = "/home/mihai/Workspace/BOSCH_2019/Holistic2_v2/master/resources/Map.json";
+    std::string line;
+    std::string mapJson;
+    std::ifstream myfile(JSON_PATH);
+    if (myfile.is_open())
+    {
+        std::cout << "open" << std::endl;
+        while (getline(myfile, line))
+        {
+            mapJson += line;
+        }
+    }
+    else 
+    {
+        std::cout << "not open" << std::endl;
+    }
+
+    Map m(mapJson);
+    m.linkNodes();
+    // for (auto & node : m.nodesMap)
+    // {
+    //     std::cout << node.second->name() << std::endl;
+    //     // std::cout << node.second->name() << std::cout;
+    // }
+    std::cout << *m.nodesMap["NOD0"]->outAhead << std::endl;
 
     return 0;
 }

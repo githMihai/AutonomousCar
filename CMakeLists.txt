@@ -2,6 +2,8 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(drive VERSION 0.1.0)
 
+set(CMAKE_CXX_STANDARD 11)
+
 # Enable testing
 include(CTest)
 enable_testing()
@@ -15,6 +17,8 @@ set(SOURCE_FILES
     ./src/serialhandler/messageconverter.cpp 
     ./src/serialhandler/serialhandler.cpp 
     ./src/socket/socket.cpp
+    ./src/map/map.cpp
+    ./src/map/node.cpp
     # ./lib/serial/src/serial.cc
 )
 # ===================================
@@ -24,6 +28,7 @@ include_directories(
     ./include/gps
     ./include/serialhandler
     ./include/socket
+    ./include/map
     ./src
     ./lib/serial
     ${JSONCPPPATH}/include

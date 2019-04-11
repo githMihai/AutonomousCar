@@ -1,2 +1,5 @@
 .vscode
 build/**
+include/map/map_old.h
+include/map/dictionary.h
+src/map/map-1.cpp
