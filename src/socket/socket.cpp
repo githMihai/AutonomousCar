@@ -102,9 +102,9 @@ int Socket::listen(int backlog)
     return retVal;
 }
 
-Socket* Socket::accept()
+SOCKET_PTR Socket::accept()
 {
-    Socket *newSocket;
+    SOCKET_PTR newSocket;
     sockaddr_in addr;
     socklen_t addrSize;
     addrSize = sizeof(addr);
@@ -112,11 +112,11 @@ Socket* Socket::accept()
         int socket_fd = ::accept(this->socket, (struct sockaddr*)&addr, &addrSize);
         if (socket_fd < 0)
         {
-             std::cerr << "accept error: " << strerror(errno) << std::endl;
-             throw std::system_error(errno, std::generic_category(), strerror(errno));
-             return NULL;
+            std::cerr << "accept error: " << strerror(errno) << std::endl;
+            throw std::system_error(errno, std::generic_category(), strerror(errno));
+            return NULL;
         }
-        newSocket = new Socket(this->socketInfo.ai_family, this->socketInfo.ai_socktype, this->socketInfo.ai_protocol);
+        newSocket = std::make_unique<Socket>(this->socketInfo.ai_family, this->socketInfo.ai_socktype, this->socketInfo.ai_protocol);
         newSocket->socket = socket_fd;
         newSocket->port = this->port;
 

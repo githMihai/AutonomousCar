@@ -8,9 +8,11 @@
 #include <netdb.h>
 #include <string.h>
 #include <stdio.h>
+#include <memory>
 
 #define IP_SIZE 16
 #define ERR_CODE -1
+#define SOCKET_PTR std::unique_ptr<Socket>
 
 /*!
  * \brief The Socket class, provides functions for socket communication
@@ -93,7 +95,7 @@ public:
      *          family as the specified socket, and allocate a new file descriptor for that socket.
      * \return status (0 if successful, and -1 otherwise)
      */
-    Socket *accept();
+    SOCKET_PTR accept();
 
     /*!
      * \name connect
