@@ -19,6 +19,8 @@ Node::Node(Json::Value node)
 
     this->inBack = NULL; this->inRight = NULL; this->inAhead = NULL; this->inLeft = NULL;
     this->outBack = NULL; this->outRight = NULL; this->outAhead = NULL; this->outLeft = NULL;
+
+    this->linked_ = false;
 }
 
 Node::Node(Node& obj)
@@ -56,9 +58,11 @@ Node& Node::operator=(Node& obj)
 
 std::ostream& operator<< (std::ostream& stream, const Node& node)
 {
-    return stream << node.name()
-                  << ",\t coord: "
-                  << node.coord();
+    return stream   << "{ " 
+                    << node.name()
+                    << ",\t coord: "
+                    << node.coord()
+                    << " }" << std::endl;
 }
 
 // void Node::link(Dictionary *dict)
@@ -69,7 +73,35 @@ std::ostream& operator<< (std::ostream& stream, const Node& node)
 //     this->inLeft = dict->at(this->arcs[IN_LEFT]);
 // }
 
+int Node::successors(NodesVect& succ)
+{
+    if (this->linked())
+    {
+        if (this->outBack != NULL)
+        {
+            succ.push_back(this->outBack);
+        }
+        if (this->outRight != NULL)
+        {
+            succ.push_back(this->outRight);
+        }
+        if (this->outAhead != NULL)
+        {
+            succ.push_back(this->outAhead);
+        }
+        if (this->outLeft != NULL)
+        {
+            succ.push_back(this->outLeft);
+        }
+        return 0;
+    }
+    return -1;
+}
+
+void Node::setLinked()                              { this->linked_ = true; }
+
 const std::string& Node::name() const               { return this->name_; }
 const std::complex<double>& Node::coord() const     { return this->coord_; }
 const std::vector<std::string>& Node::arcs() const  { return this->arcs_; }
 int Node::cost() const                              { return this->cost_; }
+bool Node::linked() const                           { return this->linked_; }

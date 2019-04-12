@@ -91,7 +91,6 @@ int main(int argc, char *argv[])
 }
 */
 
-
 //int main(int argc, char *argv[])
 //{
 //    Socket socket(AF_INET, SOCK_STREAM, 0);
@@ -123,12 +122,10 @@ int main(int argc, char *argv[])
 //        newSocket->send(buf);
 //    }
 
-
 //    newSocket->close();
 
 //    return 0;
 //}
-
 
 /*
 using namespace std;
@@ -251,7 +248,6 @@ int main()
 ////        newSocket->send(buf);
 ////    }
 
-
 ////    newSocket->close();
 
 //    return 0;
@@ -260,77 +256,77 @@ int main()
 // TODO
 int main(int argc, char *argv[])
 {
-// //    GPSConnection* g = new GPSConnection(4, 12346);
-//     GPSConnection *g = new GPSConnection(4, 12346);
-// //    g.run();
-//     GPSData gpsData = GPSData(4, std::complex<double>(0,0), std::complex<double>(0,0));
-//     std::thread run (&GPSConnection::getServer, g);
-//     std::thread getPoz (&GPSConnection::getPositionData, g, &gpsData);
+    // //    GPSConnection* g = new GPSConnection(4, 12346);
+    //     GPSConnection *g = new GPSConnection(4, 12346);
+    // //    g.run();
+    //     GPSData gpsData = GPSData(4, std::complex<double>(0,0), std::complex<double>(0,0));
+    //     std::thread run (&GPSConnection::getServer, g);
+    //     std::thread getPoz (&GPSConnection::getPositionData, g, &gpsData);
 
-//     run.join();
-//     getPoz.join();
+    //     run.join();
+    //     getPoz.join();
 
-// TODO
-////    std::string msg = "id:4;Pos:(-99.80+-6.28j);Azm:(-99.21+-12.53j)";
-//    std::string msg = "Pos:(-99.21+-12.53j)";
+    // TODO
+    ////    std::string msg = "id:4;Pos:(-99.80+-6.28j);Azm:(-99.21+-12.53j)";
+    //    std::string msg = "Pos:(-99.21+-12.53j)";
 
-//    const std::string COMPLEX_REGEX = "([+-]?[0-9]*[.]?[0-9]+)[+]([+-]?[0-9]*[.]?[0-9]+)j";
-//    const std::string NUMBER_REGEX = "[0-9]+";
-//    const std::string ID_REGEX = "id:" + NUMBER_REGEX;
-//    const std::string POSITION_REGEX = "Pos:[\(]" + COMPLEX_REGEX + "[\)]";
-//    const std::string ORIENTATION_REGEX = "Azm:[\(]" + COMPLEX_REGEX + "[\)]";
-//    const std::string REGEX = ID_REGEX + POSITION_REGEX + ORIENTATION_REGEX;
-////    const std::regex r("id:([0-9]);Pos:[\(]([+-]?[0-9]*[.]?[0-9]+)[+]([+-]?[0-9]*[.]?[0-9]+)j[\)];Azm:[\(]([+-]?[0-9]*[.]?[0-9]+)[+]([+-]?[0-9]*[.]?[0-9]+)j[\)]");
-//    const std::regex r(POSITION_REGEX);
-//    std::smatch sm;
-//    if (std::regex_search(msg, sm, r))
-//    {
-//        for (int i = 0; i < sm.size(); i++)
-//        {
-//            std::cout << sm[i] << std::endl;
-//        }
-//    }
+    //    const std::string COMPLEX_REGEX = "([+-]?[0-9]*[.]?[0-9]+)[+]([+-]?[0-9]*[.]?[0-9]+)j";
+    //    const std::string NUMBER_REGEX = "[0-9]+";
+    //    const std::string ID_REGEX = "id:" + NUMBER_REGEX;
+    //    const std::string POSITION_REGEX = "Pos:[\(]" + COMPLEX_REGEX + "[\)]";
+    //    const std::string ORIENTATION_REGEX = "Azm:[\(]" + COMPLEX_REGEX + "[\)]";
+    //    const std::string REGEX = ID_REGEX + POSITION_REGEX + ORIENTATION_REGEX;
+    ////    const std::regex r("id:([0-9]);Pos:[\(]([+-]?[0-9]*[.]?[0-9]+)[+]([+-]?[0-9]*[.]?[0-9]+)j[\)];Azm:[\(]([+-]?[0-9]*[.]?[0-9]+)[+]([+-]?[0-9]*[.]?[0-9]+)j[\)]");
+    //    const std::regex r(POSITION_REGEX);
+    //    std::smatch sm;
+    //    if (std::regex_search(msg, sm, r))
+    //    {
+    //        for (int i = 0; i < sm.size(); i++)
+    //        {
+    //            std::cout << sm[i] << std::endl;
+    //        }
+    //    }
 
-//    const std::regex r("id:([0-9]);Pos:[\(]([+-]?[0-9]*[.]?[0-9]+)[+]([+-]?[0-9]*[.]?[0-9]+)j[\)];Azm:[\(]([+-]?[0-9]*[.]?[0-9]+)[+]([+-]?[0-9]*[.]?[0-9]+)j[\)]");
-//    std::smatch sm;
-//    if (std::regex_search(msg, sm, r))
-//    {
-//        for (int i = 0; i < sm.size(); i++)
-//        {
-//            std::cout << sm[i] << std::endl;
-//        }
-//    }
+    //    const std::regex r("id:([0-9]);Pos:[\(]([+-]?[0-9]*[.]?[0-9]+)[+]([+-]?[0-9]*[.]?[0-9]+)j[\)];Azm:[\(]([+-]?[0-9]*[.]?[0-9]+)[+]([+-]?[0-9]*[.]?[0-9]+)j[\)]");
+    //    std::smatch sm;
+    //    if (std::regex_search(msg, sm, r))
+    //    {
+    //        for (int i = 0; i < sm.size(); i++)
+    //        {
+    //            std::cout << sm[i] << std::endl;
+    //        }
+    //    }
 
-//    std::string msg = "in(-99.21+-12.53j";
+    //    std::string msg = "in(-99.21+-12.53j";
 
-//    const std::regex r("in[\(]([+-]?[0-9]*[.]?[0-9]+)[+]([+-]?[0-9]*[.]?[0-9]+)j\)]");
-//    std::smatch sm;
-//    if (std::regex_search(msg, sm, r))
-//    {
-//        for (int i = 0; i < sm.size(); i++)
-//        {
-//            std::cout << sm[i] << std::endl;
-//        }
-//    }
+    //    const std::regex r("in[\(]([+-]?[0-9]*[.]?[0-9]+)[+]([+-]?[0-9]*[.]?[0-9]+)j\)]");
+    //    std::smatch sm;
+    //    if (std::regex_search(msg, sm, r))
+    //    {
+    //        for (int i = 0; i < sm.size(); i++)
+    //        {
+    //            std::cout << sm[i] << std::endl;
+    //        }
+    //    }
 
     const std::string JSON_PATH = "/home/mihai/Workspace/BOSCH_2019/Holistic2_v2/master/resources/Map.json";
-    std::string line;
-    std::string mapJson;
-    std::ifstream myfile(JSON_PATH);
-    if (myfile.is_open())
-    {
-        std::cout << "open" << std::endl;
-        while (getline(myfile, line))
-        {
-            mapJson += line;
-        }
-    }
-    else 
-    {
-        std::cout << "not open" << std::endl;
-    }
+    // std::string line;
+    // std::string mapJson;
+    // std::ifstream myfile(JSON_PATH);
+    // if (myfile.is_open())
+    // {
+    //     std::cout << "open" << std::endl;
+    //     while (getline(myfile, line))
+    //     {
+    //         mapJson += line;
+    //     }
+    // }
+    // else
+    // {
+    //     std::cout << "not open" << std::endl;
+    // }
 
-    Map m(mapJson);
+    Map m(JSON_PATH);
     m.linkNodes();
     // for (auto & node : m.nodesMap)
     // {
@@ -338,10 +334,21 @@ int main(int argc, char *argv[])
     //     // std::cout << node.second->name() << std::cout;
     // }
     std::cout << *m.nodesMap["NOD0"]->outAhead << std::endl;
+    std::cout << m["NOD1"] << std::endl;
+    NodesVect nodes = m[std::complex<double>(0, -0.45)];
+    for (auto const &node : nodes)
+    {
+        std::cout << "from coord: " << *node << std::endl;
+    }
+    NodesVect succ;
+    m["NOD24"].successors(succ);
+    for (auto const &node : succ)
+    {
+        std::cout << "from succ: " << *node << std::endl;
+    }
 
     return 0;
 }
-
 
 //int main(int argc, char *argv[])
 //{
@@ -388,7 +395,6 @@ int main(int argc, char *argv[])
 
 ////        newSocket->send(buf);
 ////    }
-
 
 ////    newSocket->close();
 

@@ -1,6 +1,8 @@
 #ifndef NODE_H
 #define NODE_H
 
+#define NODE_PTR std::shared_ptr<Node>
+
 // #ifndef DICTIONARY_H
 // #include "dictionary.h"
 // #endif
@@ -9,6 +11,10 @@
 #include <string>
 #include <json/json.h>
 #include <complex>
+
+class Node;
+
+typedef std::vector<NODE_PTR> NodesVect;
 
 typedef enum arc
 {
@@ -41,7 +47,7 @@ public:
 
     /*!
      * \name Node
-     * \brief Construct for null node
+     * \brief Construct for null node.
      */
     Node();
 
@@ -68,31 +74,38 @@ public:
     
     /*!
      * \name name
-     * \brief Getter for name_
+     * \brief Getter for name_.
      * \return name 
      */
     const std::string& name() const;
     
     /*!
      * \name coordinates
-     * \brief Getter for coordinates_
+     * \brief Getter for coordinates_.
      * \return Coordinates 
      */
     const std::complex<double>& coord() const;
 
     /*!
      * \name cost
-     * \brief Getter for cost_
+     * \brief Getter for cost_.
      * \return cost
      */
     int cost() const;
 
     /*!
      * \name arcs
-     * \brief Getter for arcs_
+     * \brief Getter for arcs_.
      * \return arcs
      */
     const std::vector<std::string>& arcs() const;
+
+    /*!
+     * \name linked
+     * \brief Getter for linked_.
+     * \return linked_
+     */
+    bool linked() const;
 
     // /*!
     //  * \name link
@@ -101,22 +114,44 @@ public:
     //  */
     // void link(Dictionary *dict);
 
+    /*!
+     * \name operator<<
+     * \brief OStream redirect operator.
+     * \param stream    String on the left
+     * \param node      Data to be converted and added to string 
+     * \return a concatenated ostream
+     */
     friend std::ostream& operator<< (std::ostream& stream, const Node& node);
 
-    Node* inBack;
-    Node* inRight;
-    Node* inAhead;
-    Node* inLeft;
-    Node* outBack;
-    Node* outRight;
-    Node* outAhead;
-    Node* outLeft;
+    /*!
+     * \name linked
+     * \brief Set the Linked attribute.
+     */
+    void setLinked();
+
+    /*!
+     * \name successors
+     * \brief Put all the successors in succ vector only if the current node was linked
+     * \param succ      list of successors
+     * \return 0 if node is linked and -1 otherwise
+     */
+    int successors(NodesVect& succ);
+
+    NODE_PTR inBack;
+    NODE_PTR inRight;
+    NODE_PTR inAhead;
+    NODE_PTR inLeft;
+    NODE_PTR outBack;
+    NODE_PTR outRight;
+    NODE_PTR outAhead;
+    NODE_PTR outLeft;
 
 private:
     std::string name_;
     std::complex<double> coord_;
     int cost_;
     std::vector<std::string> arcs_;
+    bool linked_;
 };
 
 #endif // NODE_H

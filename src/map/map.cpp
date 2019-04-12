@@ -1,9 +1,25 @@
 #include "map.h"
 
-Map::Map(const std::string jsonMap)
+Map::Map(const std::string jsonFilePath)
 {
     Json::Reader reader;
     Json::Value root;
+    std::string line;
+    std::string jsonMap;
+    std::ifstream jsonFile(jsonFilePath);
+    if (jsonFile.is_open())
+    {
+        while (getline(jsonFile, line))
+        {
+            jsonMap += line;
+        }
+    }
+    else 
+    {
+        std::cerr << "Map: " << strerror(errno) << std::endl;
+        throw std::system_error(errno, std::generic_category(), strerror(errno));
+    }
+
     if (!reader.parse(jsonMap, root))
     {
         std::cerr << reader.getFormattedErrorMessages() << std::endl;
@@ -13,8 +29,11 @@ Map::Map(const std::string jsonMap)
     this->mapSize = root["NOD"].size();
     for (int i = 0; i < this->mapSize; i++)
     {
-        Node *n = new Node(root["NOD"][i]);
+        // Node *n = new Node(root["NOD"][i]);
+        // std::shared_ptr<Node> n(new Node(root["NOD"][i]));
+        NODE_PTR n = std::make_shared<Node>(root["NOD"][i]);
         this->nodesMap[n->name()] = n;
+        this->coordMap[n->coord()].push_back(n->name());
     }
 }
 
@@ -49,8 +68,25 @@ void Map::linkNodes()
         node.second->outRight    = (node.second->arcs()[OUT_RIGHT] != "none") ? this->nodesMap[node.second->arcs()[OUT_RIGHT]] : NULL;
         node.second->outAhead    = (node.second->arcs()[OUT_AHEAD] != "none") ? this->nodesMap[node.second->arcs()[OUT_AHEAD]] : NULL;
         node.second->outLeft     = (node.second->arcs()[OUT_LEFT] != "none") ? this->nodesMap[node.second->arcs()[OUT_LEFT]] : NULL;
+
+        node.second->setLinked();
     }
 }
 
 void Map::setGoal(std::string nodeName)     { this->goal = this->nodesMap[nodeName]; }
 void Map::setStart(std::string nodeName)    { this->start = this->nodesMap[nodeName]; }
+
+Node Map::operator[] (const std::string nodeName)
+{
+    return *this->nodesMap[nodeName];
+}
+
+NodesVect Map::operator[] (const std::complex<double> coord)
+{
+    NodesVect nodes;
+    for (auto &nodeName : this->coordMap[coord])
+    {
+        nodes.push_back(this->nodesMap[nodeName]);
+    }
+    return nodes;
+}

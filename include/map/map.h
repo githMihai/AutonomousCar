@@ -9,10 +9,22 @@
 #include <iterator>
 #include <algorithm>
 #include <complex>
+#include <fstream>
+
 
 #include "node.h"
+template<typename T> struct less {};
+    template <typename T>
+    struct less<std::complex<T> >
+    {
+        bool operator() (std::complex<T> const& a, std::complex<T> const&b)
+        {
+            return std::array<T,2>{a.real(), a.imag()} < std::array<T,2>{b.real(), b.imag()};
+        }
+    };
 
-typedef std::map<std::string, Node*> Dictionary;
+typedef std::map<std::string, NODE_PTR> Dictionary;
+typedef std::map<std::complex<double>, std::vector<std::string>, struct less<std::complex<double> >> CoordMapping;
 
 class Map
 {
@@ -80,11 +92,27 @@ public:
      */
     void linkNodes();
 
+    /*!
+     * \name operator[]
+     * \brief Returns the name with specified name from the map.
+     * \param nodeName  name of the desired node
+     * \return Node 
+     */
+    Node operator[] (const std::string nodeName);
 
-    Node* goal;             // TODO: private
-    Node* start;            // TODO: private
+    /*!
+     * \name operator[]
+     * \brief Returns the nodes placed at the specidied coordinates.
+     * \param coord     coordinates of the desired nodes
+     * \return std::vector<Node> 
+     */
+    NodesVect operator[] (const std::complex<double> coord);
+
+    NODE_PTR goal;             // TODO: private
+    NODE_PTR start;            // TODO: private
     Dictionary nodesMap;    // TODO: private
     int mapSize;            // TODO: private
+    CoordMapping coordMap;  // TODO: private
 
 private:
     
