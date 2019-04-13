@@ -1,4 +1,7 @@
+#ifndef SOCKET_H
 #include "socket.h"
+#endif
+
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <errno.h>

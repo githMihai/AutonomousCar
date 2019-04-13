@@ -1,4 +1,6 @@
+#ifndef GPSDATA_G
 #include "gpsdata.h"
+#endif
 
 GPSData::GPSData(const int id /*= 0*/, const std::complex<double> position /*= 0.+0i*/, std::complex<double> orientation/* = 0.+0i*/) /*:
     id_(id),

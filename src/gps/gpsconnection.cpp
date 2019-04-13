@@ -1,4 +1,6 @@
+#ifndef GPSCONNECTION_H
 #include "gpsconnection.h"
+#endif
 
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>

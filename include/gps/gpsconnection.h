@@ -9,8 +9,13 @@
 #include <vector>
 #include <netdb.h>
 
+#ifndef SOCKET_H
 #include "socket.h"
+#endif
+
+#ifndef GPSDATA_H
 #include "gpsdata.h"
+#endif
 
 /*!
  * \brief The GPSConnection class, contains functions for receiving position from GPS server

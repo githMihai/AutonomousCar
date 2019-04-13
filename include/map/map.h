@@ -12,21 +12,30 @@
 #include <fstream>
 
 
-#include "node.h"
-template<typename T> struct less {};
-    template <typename T>
-    struct less<std::complex<T> >
-    {
-        bool operator() (std::complex<T> const& a, std::complex<T> const&b)
-        {
-            return std::array<T,2>{a.real(), a.imag()} < std::array<T,2>{b.real(), b.imag()};
-        }
-    };
+// #include "node.h"
+#ifndef NODESET_H
+#include "nodeset.h"
+#endif
 
-typedef std::map<std::string, NODE_PTR> Dictionary;
-typedef std::map<std::complex<double>, std::vector<std::string>, struct less<std::complex<double> >> CoordMapping;
+#ifndef EDGESET_H
+#include "edgeset.h"
+#endif
 
-class Map
+// TODO: remove commented
+// template<typename T> struct less {};
+//     template <typename T>
+//     struct less<std::complex<T> >
+//     {
+//         bool operator() (std::complex<T> const& a, std::complex<T> const&b)
+//         {
+//             return std::array<T,2>{a.real(), a.imag()} < std::array<T,2>{b.real(), b.imag()};
+//         }
+//     };
+
+// typedef std::map<std::string, NODE_PTR> Dictionary;
+// typedef std::map<std::complex<double>, std::vector<std::string>, struct less<std::complex<double> >> CoordMapping;
+
+class Map : public NodeSet, public EdgeSet
 {
 public:
     /*!
@@ -51,12 +60,13 @@ public:
      */
     Map& operator=(const Map& obj);
 
-    /*!
-     * \name size
-     * \brief Returns number of nodes in map.
-     * \return number of nodes in map
-     */
-    int size();
+    // TODO: remove commented
+    // /*!
+    //  * \name size
+    //  * \brief Returns number of nodes in map.
+    //  * \return number of nodes in map
+    //  */
+    // int size();
 
     /*!
      * \name setGoal
@@ -92,27 +102,28 @@ public:
      */
     void linkNodes();
 
-    /*!
-     * \name operator[]
-     * \brief Returns the name with specified name from the map.
-     * \param nodeName  name of the desired node
-     * \return Node 
-     */
-    Node operator[] (const std::string nodeName);
+    // TODO: remove commented
+    // /*!
+    //  * \name operator[]
+    //  * \brief Returns the node with specified name from the map.
+    //  * \param nodeName  name of the desired node
+    //  * \return Node 
+    //  */
+    // Node operator[] (const std::string nodeName);
 
-    /*!
-     * \name operator[]
-     * \brief Returns the nodes placed at the specidied coordinates.
-     * \param coord     coordinates of the desired nodes
-     * \return std::vector<Node> 
-     */
-    NodesVect operator[] (const std::complex<double> coord);
+    // /*!
+    //  * \name operator[]
+    //  * \brief Returns the nodes placed at the specidied coordinates.
+    //  * \param coord     coordinates of the desired nodes
+    //  * \return std::vector<Node> 
+    //  */
+    // NodesVect operator[] (const std::complex<double> coord);
 
     NODE_PTR goal;             // TODO: private
     NODE_PTR start;            // TODO: private
-    Dictionary nodesMap;    // TODO: private
-    int mapSize;            // TODO: private
-    CoordMapping coordMap;  // TODO: private
+    // Dictionary nodesMap;    // TODO: private
+    // int mapSize;            // TODO: private
+    // CoordMapping coordMap;  // TODO: private
 
 private:
     

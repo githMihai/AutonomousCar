@@ -1,4 +1,6 @@
+#ifndef FILEHANDLER_H
 #include "filehandler.h"
+#endif
 
 FileHandler::FileHandler()
 {

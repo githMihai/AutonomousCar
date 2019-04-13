@@ -1,4 +1,7 @@
+#ifndef MESSAGECONVERTER_H
 #include "messageconverter.h"
+#endif
+
 #include <iomanip>
 
 MessageConverter::MessageConverter()

@@ -1,4 +1,7 @@
+#ifndef SERIALHANDLER_H
 #include "serialhandler.h"
+#endif
+
 #include <termios.h>
 #include <errno.h>
 #include <fcntl.h>

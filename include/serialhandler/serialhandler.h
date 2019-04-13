@@ -9,8 +9,13 @@
 #include <map>
 #include <functional>
 
+#ifndef MESSAGECONVERTER_H
 #include "messageconverter.h"
+#endif
+
+#ifndef FILEHANDLER_H
 #include "filehandler.h"
+#endif
 
 /*!
  * FnPtr defins a pointer to a function that has a string as parameter

@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.0.0)
 project(drive VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS "-fpermissive")
 
 # Enable testing
 include(CTest)
@@ -19,6 +20,10 @@ set(SOURCE_FILES
     ./src/socket/socket.cpp
     ./src/map/map.cpp
     ./src/map/node.cpp
+    ./src/map/nodeset.cpp
+    ./src/map/path.cpp
+    ./src/map/edge.cpp
+    ./src/map/edgeset.cpp
     # ./lib/serial/src/serial.cc
 )
 # ===================================

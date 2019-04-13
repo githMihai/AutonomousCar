@@ -20,6 +20,7 @@
 #include <functional>
 #include <stdio.h>
 #include <string>
+#include "path.h"
 
 //void run_cmd( const std::string& cmd, std::vector<std::string>& out ){
 //    FILE*  fp;
@@ -334,7 +335,7 @@ int main(int argc, char *argv[])
     //     std::cout << node.second->name() << std::endl;
     //     // std::cout << node.second->name() << std::cout;
     // }
-    std::cout << *m.nodesMap["NOD0"]->outAhead << std::endl;
+    std::cout << *m.nodesSet["NOD0"]->outAhead << std::endl;
     std::cout << m["NOD1"] << std::endl;
     NodesVect nodes = m[std::complex<double>(0, -0.45)];
     for (auto const &node : nodes)
@@ -346,6 +347,12 @@ int main(int argc, char *argv[])
     for (auto const &node : succ)
     {
         std::cout << "from succ: " << *node << std::endl;
+    }
+
+    Path p(m.nodesSet["NOD1"], m.nodesSet["NOD133"]);
+    for (auto &node : p.pathSet)
+    {
+        std::cout << "path: " << *node << std::endl;
     }
 
     return 0;

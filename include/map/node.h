@@ -7,6 +7,10 @@
 // #include "dictionary.h"
 // #endif
 
+// #ifndef EDGE_H
+// #include "edge.h"
+// #endif
+
 #include <iostream>
 #include <string>
 #include <json/json.h>
@@ -15,6 +19,7 @@
 class Node;
 
 typedef std::vector<NODE_PTR> NodesVect;
+// typedef std::map<std::string, EDGE_PTR> Edges;
 
 typedef enum arc
 {
@@ -137,6 +142,14 @@ public:
      */
     int successors(NodesVect& succ);
 
+    /*!
+     * \name operator[]
+     * \brief Returns pointer to the edge form the specified direction
+     * \param direction
+     * \return EDGE_PTR 
+     */
+    // EDGE_PTR operator[] (const std::string direction);
+
     NODE_PTR inBack;
     NODE_PTR inRight;
     NODE_PTR inAhead;
@@ -146,10 +159,14 @@ public:
     NODE_PTR outAhead;
     NODE_PTR outLeft;
 
+    NODE_PTR parent;
+
+    // Edges edges;
+
+    int cost_;
 private:
     std::string name_;
     std::complex<double> coord_;
-    int cost_;
     std::vector<std::string> arcs_;
     bool linked_;
 };

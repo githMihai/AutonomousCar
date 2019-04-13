@@ -1,4 +1,6 @@
+#ifndef NODE_H
 #include "node.h"
+#endif
 
 Node::Node(Json::Value node)
 {
@@ -19,6 +21,7 @@ Node::Node(Json::Value node)
 
     this->inBack = NULL; this->inRight = NULL; this->inAhead = NULL; this->inLeft = NULL;
     this->outBack = NULL; this->outRight = NULL; this->outAhead = NULL; this->outLeft = NULL;
+    this->parent = NULL;
 
     this->linked_ = false;
 }
@@ -37,6 +40,8 @@ Node::Node(Node& obj)
     this->outRight  = obj.outRight;
     this->outAhead  = obj.outAhead;
     this->outLeft   = obj.outLeft;
+    this->linked_   = obj.linked();
+    this->parent    = obj.parent;
 }
 
 Node& Node::operator=(Node& obj)
@@ -53,16 +58,22 @@ Node& Node::operator=(Node& obj)
     this->outRight  = obj.outRight;
     this->outAhead  = obj.outAhead;
     this->outLeft   = obj.outLeft;
+    this->linked_   = obj.linked();
+    this->parent    = obj.parent;
     return *this;
 }
 
 std::ostream& operator<< (std::ostream& stream, const Node& node)
 {
+    if (&node == NULL)
+    {
+        return stream << "Node does not existt." << std::endl;
+    }
     return stream   << "{ " 
                     << node.name()
                     << ",\t coord: "
                     << node.coord()
-                    << " }" << std::endl;
+                    << " }";
 }
 
 // void Node::link(Dictionary *dict)
@@ -77,6 +88,10 @@ int Node::successors(NodesVect& succ)
 {
     if (this->linked())
     {
+        if (this->outAhead != NULL)
+        {
+            succ.push_back(this->outAhead);
+        }
         if (this->outBack != NULL)
         {
             succ.push_back(this->outBack);
@@ -84,10 +99,6 @@ int Node::successors(NodesVect& succ)
         if (this->outRight != NULL)
         {
             succ.push_back(this->outRight);
-        }
-        if (this->outAhead != NULL)
-        {
-            succ.push_back(this->outAhead);
         }
         if (this->outLeft != NULL)
         {
@@ -97,6 +108,11 @@ int Node::successors(NodesVect& succ)
     }
     return -1;
 }
+
+// EDGE_PTR Node::operator[] (const std::string direction)
+// {
+//     return this->edges[direction];
+// }
 
 void Node::setLinked()                              { this->linked_ = true; }
 
