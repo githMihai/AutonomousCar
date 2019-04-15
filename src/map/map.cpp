@@ -9,6 +9,7 @@ Map::Map(const std::string jsonFilePath)
     std::string line;
     std::string jsonMap;
     std::ifstream jsonFile(jsonFilePath);
+
     if (jsonFile.is_open())
     {
         while (getline(jsonFile, line))
@@ -37,24 +38,26 @@ Map::Map(const std::string jsonFilePath)
         this->nodesSet[n->name()] = n;
         this->coordMap[n->coord()].push_back(n->name());
     }
+
+    this->linkNodes();
 }
 
-Map::Map(const Map& obj)
-{
-    this->size_ = obj.size_;
-    this->nodesSet = obj.nodesSet;
-    this->goal = obj.goal;
-    this->start = obj.start;
-}
+// Map::Map(const Map& obj)
+// {
+//     this->size_ = obj.size_;
+//     this->nodesSet = obj.nodesSet;
+//     this->goal = obj.goal;
+//     this->start = obj.start;
+// }
 
-Map& Map::operator=(const Map& obj)
-{
-    this->size_ = obj.size_;
-    this->nodesSet = obj.nodesSet;
-    this->goal = obj.goal;
-    this->start = obj.start;
-    return *this;
-}
+// Map& Map::operator=(const Map& obj)
+// {
+//     this->size_ = obj.size_;
+//     this->nodesSet = obj.nodesSet;
+//     this->goal = obj.goal;
+//     this->start = obj.start;
+//     return *this;
+// }
 
 void Map::linkNodes()
 {
@@ -62,24 +65,42 @@ void Map::linkNodes()
     // for ( node = this->nodesSet.begin(); node != this->nodesSet.end(); node++ )
     for (auto & node : this->nodesSet)
     {
-        node.second->inBack      = (node.second->arcs()[IN_BACK] != "none") ? this->nodesSet[node.second->arcs()[IN_BACK]] : NULL;
-        node.second->inRight     = (node.second->arcs()[IN_RIGHT] != "none") ? this->nodesSet[node.second->arcs()[IN_RIGHT]] : NULL;
-        node.second->inAhead     = (node.second->arcs()[IN_AHEAD] != "none") ? this->nodesSet[node.second->arcs()[IN_AHEAD]] : NULL;
-        node.second->inLeft      = (node.second->arcs()[IN_LEFT] != "none") ? this->nodesSet[node.second->arcs()[IN_LEFT]] : NULL;
-        node.second->outBack     = (node.second->arcs()[OUT_BACK] != "none") ? this->nodesSet[node.second->arcs()[OUT_BACK]] : NULL;
-        node.second->outRight    = (node.second->arcs()[OUT_RIGHT] != "none") ? this->nodesSet[node.second->arcs()[OUT_RIGHT]] : NULL;
-        node.second->outAhead    = (node.second->arcs()[OUT_AHEAD] != "none") ? this->nodesSet[node.second->arcs()[OUT_AHEAD]] : NULL;
-        node.second->outLeft     = (node.second->arcs()[OUT_LEFT] != "none") ? this->nodesSet[node.second->arcs()[OUT_LEFT]] : NULL;
+        if (!node.second->linked())
+        {    
+            node.second->inBack      = (node.second->arcs()[IN_BACK] != "none") ? this->nodesSet[node.second->arcs()[IN_BACK]] : NULL;
+            node.second->inRight     = (node.second->arcs()[IN_RIGHT] != "none") ? this->nodesSet[node.second->arcs()[IN_RIGHT]] : NULL;
+            node.second->inAhead     = (node.second->arcs()[IN_AHEAD] != "none") ? this->nodesSet[node.second->arcs()[IN_AHEAD]] : NULL;
+            node.second->inLeft      = (node.second->arcs()[IN_LEFT] != "none") ? this->nodesSet[node.second->arcs()[IN_LEFT]] : NULL;
+            node.second->outBack     = (node.second->arcs()[OUT_BACK] != "none") ? this->nodesSet[node.second->arcs()[OUT_BACK]] : NULL;
+            node.second->outRight    = (node.second->arcs()[OUT_RIGHT] != "none") ? this->nodesSet[node.second->arcs()[OUT_RIGHT]] : NULL;
+            node.second->outAhead    = (node.second->arcs()[OUT_AHEAD] != "none") ? this->nodesSet[node.second->arcs()[OUT_AHEAD]] : NULL;
+            node.second->outLeft     = (node.second->arcs()[OUT_LEFT] != "none") ? this->nodesSet[node.second->arcs()[OUT_LEFT]] : NULL;
+        }
 
-        this->addEdge(node.second, node.second->inBack, 1);
-        this->addEdge(node.second, node.second->inRight, 1);
-        this->addEdge(node.second, node.second->inAhead, 1);
-        this->addEdge(node.second, node.second->inLeft, 1);
-        this->addEdge(node.second, node.second->outBack, 1);
-        this->addEdge(node.second, node.second->outRight, 1);
-        this->addEdge(node.second, node.second->outAhead, 1);
-        this->addEdge(node.second, node.second->outLeft, 1);
-
+        if (node.second->outBack != NULL &&
+            !this->edgeExist(node.second->name(), node.second->outBack->name()))
+        {
+            this->addEdge(node.second, node.second->outBack, 1);
+            // std::cout << this->edge(node.second->name(), node.second->outBack->name()) << std::endl;
+        }
+        if (node.second->outRight != NULL &&
+            !this->edgeExist(node.second->name(), node.second->outRight->name()))
+        {
+            this->addEdge(node.second, node.second->outRight, 1);
+            // std::cout << this->edge(node.second->name(), node.second->outRight->name()) << std::endl;
+        }
+        if (node.second->outAhead != NULL &&
+            !this->edgeExist(node.second->name(), node.second->outAhead->name()))
+        {
+            this->addEdge(node.second, node.second->outAhead, 1);
+            // std::cout << this->edge(node.second->name(), node.second->outAhead->name()) << std::endl;
+        }
+        if (node.second->outLeft != NULL &&
+            !this->edgeExist(node.second->name(), node.second->outLeft->name()))
+        {    
+            this->addEdge(node.second, node.second->outLeft, 1);
+            // std::cout << this->edge(node.second->name(), node.second->outLeft->name()) << std::endl;
+        }
         node.second->setLinked();
     }
 }
@@ -100,5 +121,16 @@ void Map::setStart(std::string nodeName)    { this->start = this->nodesSet[nodeN
 //     {
 //         nodes.push_back(this->nodesSet[nodeName]);
 //     }
-//     return nodes;
+//     if (nodes.size() > 0)   { return nodes; }
+//     else
+//     {
+//         throw std::system_error(-1, std::generic_category(), "there is no Node at the specified coordinate");
+//     }
+
 // }
+
+Map& Map::getInstance()
+{
+    static Map instance("/home/mihai/Workspace/BOSCH_2019/Holistic2_v2/master/resources/Map.json");
+    return instance;
+}

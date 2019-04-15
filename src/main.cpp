@@ -20,7 +20,10 @@
 #include <functional>
 #include <stdio.h>
 #include <string>
-#include "path.h"
+// #include "path.h"
+// #include "vec2.h"
+#include "pathtracking.h"
+
 
 //void run_cmd( const std::string& cmd, std::vector<std::string>& out ){
 //    FILE*  fp;
@@ -257,15 +260,15 @@ int main()
 // TODO
 int main(int argc, char *argv[])
 {
-    // //    GPSConnection* g = new GPSConnection(4, 12346);
-    //     GPSConnection *g = new GPSConnection(4, 12346);
-    // //    g.run();
-    //     GPSData gpsData = GPSData(4, std::complex<double>(0,0), std::complex<double>(0,0));
-    //     std::thread run (&GPSConnection::getServer, g);
-    //     std::thread getPoz (&GPSConnection::getPositionData, g, &gpsData);
+    //    GPSConnection* g = new GPSConnection(4, 12346);
+        GPSConnection *g = new GPSConnection(4, 12346);
+    //    g.run();
+        GPSData gpsData = GPSData(4, std::complex<double>(0,0), std::complex<double>(0,0));
+        std::thread run (&GPSConnection::getServer, g);
+        std::thread getPoz (&GPSConnection::getPositionData, g, &gpsData);
 
-    //     run.join();
-    //     getPoz.join();
+        run.join();
+        getPoz.join();
 
     // TODO
     ////    std::string msg = "id:4;Pos:(-99.80+-6.28j);Azm:(-99.21+-12.53j)";
@@ -328,32 +331,67 @@ int main(int argc, char *argv[])
     // }
 
 // TODO
-    Map m(JSON_PATH);
-    m.linkNodes();
-    // for (auto & node : m.nodesMap)
-    // {
-    //     std::cout << node.second->name() << std::endl;
-    //     // std::cout << node.second->name() << std::cout;
-    // }
-    std::cout << *m.nodesSet["NOD0"]->outAhead << std::endl;
-    std::cout << m["NOD1"] << std::endl;
-    NodesVect nodes = m[std::complex<double>(0, -0.45)];
-    for (auto const &node : nodes)
-    {
-        std::cout << "from coord: " << *node << std::endl;
-    }
-    NodesVect succ;
-    m["NOD24"].successors(succ);
-    for (auto const &node : succ)
-    {
-        std::cout << "from succ: " << *node << std::endl;
-    }
+    // // Map m(JSON_PATH);
+    // // Map::getInstance();
+    // // Map m;
+    // // m->getInstance();
+    // Map::getInstance().linkNodes();
+    // // for (auto & node : m.nodesMap)
+    // // {
+    // //     std::cout << node.second->name() << std::endl;
+    // //     // std::cout << node.second->name() << std::cout;
+    // // }
 
-    Path p(m.nodesSet["NOD1"], m.nodesSet["NOD133"]);
-    for (auto &node : p.pathSet)
-    {
-        std::cout << "path: " << *node << std::endl;
-    }
+    // // std::cout << Map::getInstance().nodesSet["NOD0"]->outAhead << std::endl;
+    // // std::cout << Map::getInstance()["NOD1"] << std::endl;
+    // NodesVect nodes = Map::getInstance()[std::complex<double>(0, 4.5)];
+    // // for (auto const &node : nodes)
+    // // {
+    // //     std::cout << "from coord: " << *node << std::endl;
+    // // }
+    // // NodesVect succ;
+    // // Map::getInstance()["NOD24"].successors(succ);
+    
+    // // for (auto const &node : succ)
+    // // {
+    // //     std::cout << "from succ: " << *node << std::endl;
+    // // }
+
+    // // for (auto const  &edge : Map::getInstance().edgesSet)
+    // // {
+    // //     std::cout << *edge.second << std::endl;
+    // // }
+
+    // // PathTracking p(std::complex<double>(0, 4.5), std::complex<double>(7.65,3.15));
+
+    // std::cout <<  *Map::getInstance().closest(std::complex<double>(0, 4.8)) << std::endl;
+
+    // // Path p(Map::getInstance().nodePointer("NOD1"), Map::getInstance().nodePointer("NOD133"));
+    // // for (auto &node : p.pathSet)
+    // // {
+    // //     std::cout << "path: " << *node << std::endl;
+    // // }
+
+    // Path p("NOD1", "NOD133");
+    // for (auto &node : p.pathSet)
+    // {
+    //     std::cout << "path: " << *node << std::endl;
+    // }
+    // std::cout << *p.closest(std::complex<double>(1.4, 2)) << std::endl;
+
+    // for (auto &edge : p.edgesSet)
+    // {
+    //     std::cout << "path: " << *edge.second << std::endl;
+    // }
+
+    // std::cout << *p.currentEdge(std::complex<double>(2.5, 2.3)) << std::endl;
+    // std::cout << p.displacement(std::complex<double>(2.5, 2.3)) << std::endl;
+    
+
+    // // Vec2 v(std::complex<double>(0,0), std::complex<double>(0,4));
+    // // std::cout << v.distance(std::complex<double>(-1, 3)) << std::endl;
+    // // const std::complex<double> point(2,1);
+    // // std::cout << v.direction(point) << std::endl;
 
     return 0;
 }

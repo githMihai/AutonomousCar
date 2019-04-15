@@ -15,11 +15,11 @@
 // #include "node.h"
 #ifndef NODESET_H
 #include "nodeset.h"
-#endif
+#endif // NODESET_H
 
 #ifndef EDGESET_H
 #include "edgeset.h"
-#endif
+#endif // EDGESET_H
 
 // TODO: remove commented
 // template<typename T> struct less {};
@@ -38,27 +38,13 @@
 class Map : public NodeSet, public EdgeSet
 {
 public:
-    /*!
-     * \name Map
-     * \brief Construct a new Map object.
-     * \param jsonMap   path to json file representing map
-     */
-    Map(const std::string jsonMap);
 
     /*!
-     * \name Map
-     * \brief Copy Constructor.
-     * \param obj   object to pe copied
+     * \name getInstance
+     * \brief Get the Instance object.
+     * \return an instance of map
      */
-    Map(const Map& obj);
-    
-    /*!
-     * \name operator=
-     * \brief Assignment operator.
-     * \param obj   object to be copied
-     * \return Map& 
-     */
-    Map& operator=(const Map& obj);
+    static Map& getInstance();
 
     // TODO: remove commented
     // /*!
@@ -102,7 +88,7 @@ public:
      */
     void linkNodes();
 
-    // TODO: remove commented
+    // // TODO: remove commented
     // /*!
     //  * \name operator[]
     //  * \brief Returns the node with specified name from the map.
@@ -126,7 +112,28 @@ public:
     // CoordMapping coordMap;  // TODO: private
 
 private:
+
+    /*!
+     * \name Map
+     * \brief Construct a new Map object.
+     * \param jsonMap   path to json file representing map
+     */
+    Map(const std::string jsonMap);
+
+    /*!
+     * \name Map
+     * \brief Copy Constructor.
+     * \param obj   object to pe copied
+     */
+    Map(const Map& obj);
     
+    /*!
+     * \name operator=
+     * \brief Assignment operator.
+     * \param obj   object to be copied
+     * \return Map& 
+     */
+    Map& operator=(const Map& obj);
 };
 
 #endif // MAP_H

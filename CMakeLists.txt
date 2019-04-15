@@ -24,6 +24,9 @@ set(SOURCE_FILES
     ./src/map/path.cpp
     ./src/map/edge.cpp
     ./src/map/edgeset.cpp
+    ./src/map/vec2.cpp
+    ./src/map/pathtracking.cpp
+    ./src/map/heuristics.cpp
     # ./lib/serial/src/serial.cc
 )
 # ===================================
@@ -35,8 +38,9 @@ include_directories(
     ./include/socket
     ./include/map
     ./src
-    ./lib/serial
+    ./lib/serial/include
     ${JSONCPPPATH}/include
+    ${OpenCV_INCLUDE_DIRS}
 )
 add_subdirectory(${CMAKE_SOURCE_DIR}/lib/serial)
 # ===================================
@@ -60,8 +64,11 @@ include( CPack )
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 
+set( OpenCV_DIR "/usr/lib/opencv" )
+
 FIND_PACKAGE(Threads REQUIRED)  
 FIND_PACKAGE(PkgConfig REQUIRED)
+FIND_PACKAGE(OpenCV REQUIRED COMPONENTS core imgproc highgui)
 
 pkg_check_modules(JSONCPP jsoncpp)
 link_libraries(${JSONCPP_LIBRARIES})
@@ -83,5 +90,6 @@ target_link_libraries( ${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} )
 # target_link_libraries( ${PROJECT_NAME} serial )
 target_link_libraries( ${PROJECT_NAME} ${JSONCPP_LIBRARIES} )
 target_link_libraries( ${PROJECT_NAME} serial )
+target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} )
 # target_link_libraries( ${PROJECT_NAME} serial )
 # ===================================

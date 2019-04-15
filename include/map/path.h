@@ -3,11 +3,11 @@
 
 #ifndef NODESET_H
 #include "nodeset.h"
-#endif
+#endif // NODESET_H
 
 #ifndef EDGESET_H
 #include "edgeset.h"
-#endif
+#endif // EDGESET_H
 
 class Path : public NodeSet, public EdgeSet
 {
@@ -18,6 +18,22 @@ public:
      * \param startingNode
      */
     Path(NODE_PTR startingNode, NODE_PTR destinationNode);
+
+    /*!
+     * \name Path
+     * \brief Construct a new Path object
+     * \param startingNode
+     * \param destinationNode
+     */
+    Path(const std::string startingNode, const std::string destinationNode);
+
+    /*!
+     * \name Path
+     * \brief Construct a new Path object
+     * \param startingPosition
+     * \param destinationPosition 
+     */
+    Path(const std::complex<double> startingPosition, const std::complex<double> destinationPosition);
 
     /*!
      * \name addNode
@@ -84,7 +100,32 @@ public:
      */
     void makeEdges();
 
+    /*!
+     * \name closest
+     * \brief Return the closest node to the specified coordinates
+     * \param coord
+     * \return NODE_PTR 
+     */
+    NODE_PTR closest(std::complex<double> coord);
+    
+    /*!
+     * \name currentEdge
+     * \brief Returns the edge coresponding edge for given coordinates
+     * \param coord 
+     * \return EDGE_PTR 
+     */
+    EDGE_PTR currentEdge(std::complex<double> coord);
+
+    /*!
+     * \name displacement
+     * \brief Returns displacement from the path
+     * \param coord     position
+     * \return double 
+     */
+    double displacement(std::complex<double> coord);
+
     NodesVect pathSet;
+    EdgesVect edgePath;
 
 private:
     NODE_PTR start_;

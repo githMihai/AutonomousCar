@@ -38,12 +38,28 @@ public:
     virtual Node operator[] (const std::string nodeName);
 
     /*!
+     * \namee nodePointer
+     * \brief Returns a safe pointer (NODE_PTR) to the node with specified name.
+     * \param nodeName  name of the desired node
+     * \return NODE_PTR 
+     */
+    virtual NODE_PTR nodePointer(const std::string nodeName);
+
+    /*!
      * \name operator[]
      * \brief Returns the nodes placed at the specidied coordinates.
      * \param coord     coordinates of the desired nodes
      * \return std::vector<Node> 
      */
     virtual NodesVect operator[] (const std::complex<double>coord);
+
+    /*!
+     * \name closest
+     * \brief Return the closest node to the specified coordinates
+     * \param coord
+     * \return NODE_PTR 
+     */
+    virtual NODE_PTR closest(std::complex<double> coord);
     
     Dictionary nodesSet;
     CoordMapping coordMap;

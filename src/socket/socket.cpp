@@ -296,18 +296,38 @@ std::string Socket::getHostIP()
     return std::string(ip);
 }
 
+int Socket::shutdown()
+{
+    int status = 0;
+    if (this->socket >= 0)
+    {
+        status = ::shutdown(this->socket, SHUT_RDWR);
+        if (status < 0)
+        {
+            this->socketIsOpen = true;
+            std::cerr << "shutdown error: " << strerror(errno) << std::endl;
+            throw std::system_error(errno, std::generic_category(), strerror(errno));
+        }
+    }
+    return status;
+}
+
 int Socket::close()
 {
-    int status = ::close(this->socket);
-    if (status < 0)
+    int status = 0;
+    if (this->socket >= 0)
     {
-        this->socketIsOpen = true;
-        std::cerr << "close error: " << strerror(errno) << std::endl;
-        throw std::system_error(errno, std::generic_category(), strerror(errno));
-    }
-    else
-    {
-        this->socketIsOpen = false;
+        status = ::close(this->socket);
+        if (status < 0)
+        {
+            this->socketIsOpen = true;
+            std::cerr << "close error: " << strerror(errno) << std::endl;
+            throw std::system_error(errno, std::generic_category(), strerror(errno));
+        }
+        else
+        {
+            this->socketIsOpen = false;
+        }
     }
     return status;
 }

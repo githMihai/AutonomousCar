@@ -133,8 +133,9 @@ void GPSConnection::getServer()
                         std::cout << "Subscribe @ GPS server" << std::endl;
                     }
                     this->newServerIP = false;
+                    this->socket.close();
                 }
-                this->socket.close();
+                // this->socket.close();
             }
             catch (const std::system_error& e)
             {
@@ -158,10 +159,11 @@ void GPSConnection::sendIDToServer(std::string newServer)
     /**
       * Sends thisCarID to server for identification
       */
-    Socket s;
+    // Socket s;
     try
     {
-        s = Socket(AF_INET, SOCK_STREAM, 0);
+        // s = Socket(AF_INET, SOCK_STREAM, 0);
+        this->socket = Socket(AF_INET, SOCK_STREAM, 0);
         std::cout   << "Vehicle "
                     << this->thisCarId
                     << " subscribing to GPS server: "
@@ -169,18 +171,24 @@ void GPSConnection::sendIDToServer(std::string newServer)
                     << ": "
                     << this->carSubscriptionPort
                     << std::endl;
-        s.connect(newServer, this->carSubscriptionPort);
+        // s.connect(newServer, this->carSubscriptionPort);
+        this->socket.connect(newServer, this->carSubscriptionPort);
         sleep(2);
         std::string strID = std::to_string(this->thisCarId);
-        s.send(strID);
-        s.close();
+        // s.send(strID);
+        this->socket.send(strID);
+        // s.shutdown();
+        this->socket.shutdown();
+        // s.close();
+        this->socket.close();
         std::cout << "Vehicle ID sent to server---------------------" << std::endl;
         this->idSentFlag = true;
     }
     catch (const std::system_error& e)
     {
         std::cout << "Failed to send ID to server, with error: " << e.what();
-        s.close();
+        // s.close();
+        this->socket.close();
         this->idSentFlag = false;
     }
 }
@@ -227,22 +235,29 @@ void GPSConnection::getPositionData(GPSData *gpsData)
                                 << e.what()
                                 << std::endl;
                     sleep(1);
+                    this->GSocketPoz.close();
                     // TODO: free GSocketPoz
                 }
             }
             if (this->GSocketPoz.isOpen())
             {
+                SOCKET_PTR c = nullptr;
                 try
                 {
-                    SOCKET_PTR c =  this->GSocketPoz.accept();
+                    c = this->GSocketPoz.accept();
                     std::string buf;
                     buf = c->recv(4096);
                     std::cout << "received: " << buf << std::endl;
                     this->msg2data(buf, gpsData);
                     std::cout << *gpsData << std::endl;
+                    c->close();
+                    c.reset();
                 }
                 catch (const std::system_error& e)
                 {
+                    if (c != nullptr)
+                        c->close();
+                    this->GSocketPoz.close();
                     std::cout   << "Receiving position data from server "
                                 << this->serverIP
                                 << " failed with error: "

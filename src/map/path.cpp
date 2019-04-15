@@ -1,32 +1,52 @@
 #ifndef PATH_H
 #include "path.h"
-#endif
+#endif // PATH_H
 
 #include <algorithm>
 #include <queue>
 
-float manhattanHeuristic(std::complex<double> position, std::complex<double> goal)
-{
-    return abs(position.real() - goal.real()) + abs(position.imag() - goal.imag());
-}
+#ifndef MAP_H
+#include "map.h"
+#endif // MAP_H
 
+#ifndef HEURISTICS_H
+#include "heuristics.h"
+#endif // HEURISTICS_H
 
 bool operator<(const NODE_PTR& n1, const NODE_PTR& n2)
 {
     return n1->cost() > n2->cost();
 }
 
+
+
 Path::Path(NODE_PTR startingNode, NODE_PTR destinationNode)
 {
+    this->start_ = startingNode;
     this->destination_ = destinationNode;
-    aStar(startingNode);
+    aStar(this->start_);
 }
+
+Path::Path(const std::string startingNode, const std::string destiantionNode)
+{
+    this->start_ = Map::getInstance().nodePointer(startingNode);
+    this->destination_ = Map::getInstance().nodePointer(destiantionNode);
+    aStar(this->start_);
+}
+
+// Path::Paht(const std::complex<double> startingPosition, std::complex<double> destinationPosition)
+// {
+    
+// }
+
 
 void Path::addNode(NODE_PTR node)
 {
     this->nodesSet[node->name()] = node;
     this->coordMap[node->coord()].push_back(node->name());
 }
+
+
 
 void Path::removeNode(NODE_PTR node)
 {
@@ -44,35 +64,34 @@ void Path::removeNode(NODE_PTR node)
     }
 }
 
+
+
 void Path::removeNode(std::string nodeName)
 {
     NODE_PTR node = this->nodesSet[nodeName];
     this->removeNode(node);
 }
 
+
+
 void Path::removeNodes(std::complex<double> coord)
 {
     std::vector<std::string> nodes = this->coordMap[coord];
     this->coordMap.erase(coord);
-    for (auto const& nodeName : nodes)
-    {
-        this->nodesSet.erase(nodeName);
-    }
+    for (auto const& nodeName : nodes)      { this->nodesSet.erase(nodeName); }
 }
 
-NODE_PTR Path::destination()
-{
-    return this->destination_;
-}
+
+
+NODE_PTR Path::destination()                { return this->destination_; }
 
 bool Path::isDestination(NODE_PTR node)
 {
-    if (node->coord() == this->destination()->coord())
-    {
-        return true;
-    }
+    if (node->coord() == this->destination()->coord())  { return true; }
     return false;
 }
+
+
 
 void Path::aStar(NODE_PTR startNode)
 {
@@ -85,10 +104,7 @@ void Path::aStar(NODE_PTR startNode)
     frontier.push(node);
     while (true)
     {
-        if (frontier.empty())
-        {
-            return;
-        }
+        if (frontier.empty())       { return; }
 
         node = frontier.top();
         frontier.pop();
@@ -105,6 +121,8 @@ void Path::aStar(NODE_PTR startNode)
                 this->size_++;
             } 
             std::reverse(this->pathSet.begin(), this->pathSet.end());
+            this->makeEdges();
+            
         }
 
         explored.push_back(node);
@@ -130,19 +148,13 @@ void Path::aStar(NODE_PTR startNode)
             bool ok = true;
             for (auto &s : explorable)
             {
-                if (s->name() == succ->name())
-                {
-                    ok = false;
-                }
+                if (s->name() == succ->name())      { ok = false; }
             }
 
             bool found = false;
             for (auto &state : explored)
             {
-                if (state->name() == succ->name())
-                {
-                    found = true;
-                }
+                if (state->name() == succ->name())  { found = true; }
             }
 
             if (found == false && ok)
@@ -152,12 +164,72 @@ void Path::aStar(NODE_PTR startNode)
                 explorable.push_back(to_explore);
             }
 
-            // bool ok
         }
     }
 }
 
 void Path::makeEdges()
 {
+    for (int i = 0; i < this->pathSet.size()-1; i++)
+    {
+        // this->edgePath.push_back(std::make_shared<Edge>(this->pathSet.at(i), this->pathSet.at(i+1)));
+        EDGE_PTR e = std::make_shared<Edge>(
+            this->pathSet.at(i), 
+            this->pathSet.at(i+1),
+            1
+        );
+        this->edgePath.push_back(e);
+        this->addEdge(e);
+    }
+}
 
+// Overload
+NODE_PTR Path::closest(std::complex<double> coord)
+{
+    double min = MAXFLOAT;
+    NODE_PTR n = NULL;
+    for (auto &node : this->pathSet)
+    {
+        double distance = euclideanHeuristic(node->coord(), coord);
+        if (distance < min)
+        {
+            min = distance;
+            n = node;
+        }
+    }
+    return n;
+}
+
+EDGE_PTR Path::currentEdge(std::complex<double> coord)
+{
+    double min1 = MAXFLOAT;
+    double min2 = min1;
+    NODE_PTR node1= NULL;
+    NODE_PTR node2= NULL;
+    for (auto &it : this->pathSet)
+    {
+        double distance = euclideanHeuristic(it->coord(), coord);
+        if (distance < min1)
+        {
+            min2 = min1;
+            min1 = distance;
+            node2 = node1;
+            node1 = it;
+        }
+        else if (distance < min2 && distance != min1)
+        {
+            min2 = distance;
+            node2 = it;
+        }
+    }
+    if (node1 == NULL || node2 == NULL)     { return NULL; }
+    EDGE_PTR e = this->pointerEdge(node1->name(), node2->name());
+    if (e == nullptr)  { e = this->pointerEdge(node2->name(), node1->name()); }
+    return e;
+}
+
+double Path::displacement(std::complex<double> coord)
+{
+    EDGE_PTR e = this->currentEdge(coord);
+    return e->direction(coord);
 }

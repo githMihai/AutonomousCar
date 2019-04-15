@@ -5,7 +5,7 @@
 
 #ifndef EDGE_H
 #include "edge.h"
-#endif
+#endif // EDGE_H
 
 typedef std::vector<EDGE_PTR> EdgesVect;
 typedef std::map<std::tuple<std::string, std::string>, EDGE_PTR> EdgeDict;
@@ -28,6 +28,15 @@ public:
      * \return Edge 
      */
     virtual Edge edge(const std::string fromName, const std::string toName);
+
+    /*!
+     * \name edge
+     * \brief Returns a pointer to the edge formed by specified nodes.
+     * \param fromName  From node
+     * \param toName    To node
+     * \return Edge 
+     */
+    virtual EDGE_PTR pointerEdge(const std::string fromName, const std::string toName);
 
     /*!
      * \name edge
@@ -69,6 +78,16 @@ public:
      * \param toName    To node
      */
     virtual void removeEdge(const std::string fromName, const std::string toName);
+
+    /*!
+     * \name edgeExist
+     * \brief Check if an edge exists in th edgesSet.
+     * \param fromName 
+     * \param toName 
+     * \return true 
+     * \return false 
+     */
+    virtual bool edgeExist(const std::string fromName, const std::string toName);
 
     EdgeDict edgesSet;
 

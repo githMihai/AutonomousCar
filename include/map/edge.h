@@ -3,11 +3,15 @@
 
 #ifndef NODE_H
 #include "node.h"
-#endif
+#endif // NODE__H
+
+#ifndef VEC2_H
+#include "vec2.h"
+#endif // VEC2_H
 
 #define EDGE_PTR std::shared_ptr<Edge>
 
-class Edge
+class Edge : public Vec2
 {
 public:
     /*!
@@ -39,7 +43,7 @@ public:
      * \brief Getter for cost_.
      * \return cost_
      */
-    int cost();
+    const int cost() const;
 
     /*!
      * \name setCost
@@ -47,6 +51,13 @@ public:
      * \param cost_     cost of the edge
      */
     void setCost(int cost_);
+    
+    // /*!
+    //  * \name orientation
+    //  * \brief Returns the orientation of the edge
+    //  * \return std::complex<double> 
+    //  */
+    // const std::complex<double>& orientation() const;
 
     /*!
      * name from
@@ -62,10 +73,29 @@ public:
      */
     NODE_PTR to();
 
+    /*!
+     * \name operator<<
+     * \brief OStream redirect operator.
+     * \param stream    String on the left
+     * \param edge      Data to be converted and added to string 
+     * \return a concatenated ostream
+     */
+    friend std::ostream& operator<< (std::ostream& stream, const Edge& edge);
+
+    /*!
+     * \name operator==
+     * \brief Compare 2 objects of type Edge
+     * \param e 
+     * \return true 
+     * \return false 
+     */
+    bool operator==(Edge& e);
+
 private:
     NODE_PTR from_;
     NODE_PTR to_;
     int cost_;
+    std::complex<double> orientation_;
 };
 
 #endif // EDGE_H

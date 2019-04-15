@@ -1,15 +1,18 @@
 #ifndef EDGE_H
 #include "edge.h"
-#endif
 
-Edge::Edge(NODE_PTR from, NODE_PTR to, int cost_)
+Edge::Edge(NODE_PTR from, NODE_PTR to, int cost_) : Vec2(from->coord(), to->coord())
 {
     this->from_ = from;
     this->to_ = to;
     this->cost_ = cost_;
+    double real = this->to_->coord().real() - this->from_->coord().real();
+    double imag = this->to_->coord().imag() - this->from_->coord().imag();
+    // std::cout << "In constructor is ok: " << this->orientation_ << std::endl;
+    
 }
 
-Edge::Edge(Edge& edge)
+Edge::Edge(Edge& edge) : Vec2((Vec2)edge)
 {
     this->from_ = edge.from();
     this->to_ = edge.to();
@@ -24,15 +27,35 @@ Edge& Edge::operator=(Edge& edge)
     return *this;
 }
 
-int Edge::cost()
+const int Edge::cost() const                            { return this->cost_; }
+void Edge::setCost(int cost_)                           { this->cost_ = cost_; }
+// const std::complex<double>& Edge::orientation() const   { return this->orientation_; }
+NODE_PTR Edge::from()                                   { return this->from_; }
+NODE_PTR Edge::to()                                     { return this->to_; }
+
+
+std::ostream& operator<< (std::ostream& stream, const Edge& edge)
 {
-    return this->cost_;
+    if (&edge == NULL)
+    {
+        return stream << "Edge does not exist." << std::endl;
+    }
+    return stream   << "{ " 
+                    << edge.from()->name()
+                    << " "
+                    << edge.from()->coord()
+                    << "\t-> "
+                    << edge.to()->name()
+                    << " "
+                    << edge.to()->coord()
+                    << ";\t orientation: "
+                    << edge.orientation
+                    << "}";
 }
 
-void Edge::setCost(int cost_)
+bool Edge::operator==(Edge& e)
 {
-    this->cost_ = cost_;
+    return (this->from()->name() == e.from()->name() && this->to()->name() == e.to()->name());
 }
 
-NODE_PTR Edge::from()   { return this->from_; }
-NODE_PTR Edge::to()     { return this->to_; }
+#endif // EDGE_H
