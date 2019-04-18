@@ -17,6 +17,17 @@
 #include "line.h"
 #endif // LINE_H
 
+#ifndef PATH_H
+#include "path.h"
+#endif // PATH_H
+
+struct MouseParameters
+{
+    Path* p;
+    cv::Mat image;
+    ImageCoord* imgCoord;
+};
+
 class MapRepresentation
 {
 public:
@@ -25,13 +36,19 @@ public:
     void addPrimitives(const std::vector<NODE_PTR> nodes);
     void addPrimitive(const NODE_PTR node);
     void addPrimitive(const EDGE_PTR edge);
+    void setMouseCallbackParam(Path* pathObj);
     void drawAll();
+    void showMap();
+    cv::Point2f getPosition();
+    static void readPosition(int  event, int  x, int  y, int  flag, MouseParameters *param);
 private:
     std::string imagePath;
     cv::Mat image;
     // std::vector<IImagePrimitive> primitives;
     std::vector<Line*> primitives;
     ImageCoord imgCoord;
+    cv::Point2f position;
+    cv::Point2f pathPosition;
 };
 
 #endif // MAPREPRESENTATION_H

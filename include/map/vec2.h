@@ -7,6 +7,15 @@
 #include "igeomprim.h"
 #endif // IGEOMPRIM_H
 
+/*!
+* \name vecLength
+* \brief   Returns the length or norm of a vector.
+*          |v| = sqrt(v.x^2 + v.y^2)
+* \param vect 
+* \return double 
+*/
+double vecLength(const std::complex<double>& vect);
+
 class Vec2 : public IGeomPrim
 {
 public:
@@ -59,14 +68,14 @@ public:
      */
     friend double dot(const std::complex<double>& a, const std::complex<double>& b);
 
-    /*!
-     * \name vecLength
-     * \brief   Returns the length or norm of a vector.
-     *          |v| = sqrt(v.x^2 + v.y^2)
-     * \param vect 
-     * \return double 
-     */
-    friend double vecLength(const std::complex<double>& vect);
+    // /*!
+    //  * \name vecLength
+    //  * \brief   Returns the length or norm of a vector.
+    //  *          |v| = sqrt(v.x^2 + v.y^2)
+    //  * \param vect 
+    //  * \return double 
+    //  */
+    // friend double vecLength(const std::complex<double>& vect);
     // double vectPointSin(const std::complex<double>& point);
 
     /*!

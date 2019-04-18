@@ -1,6 +1,6 @@
 #include "vec2.h"
 
-double vecLength(const std::complex<double> vect);
+double vecLength(const std::complex<double>& vect);
 
 Vec2::Vec2(std::complex<double> a, std::complex<double> b)
 {
@@ -87,7 +87,7 @@ double Vec2::distance(const std::complex<double>& point)
     return dot(vect, normal_)/normalLength;
 }
 
-double vecLength(const std::complex<double> vect)
+double vecLength(const std::complex<double>& vect)
 {
     return fabs(
         sqrt(
@@ -115,7 +115,7 @@ double vecLength(const std::complex<double> vect)
 
 double Vec2::cross(const std::complex<double>& vect)
 {
-    std::cout << this->orientation << std::endl;
+    // std::cout << this->orientation << std::endl;
     return this->orientation.real()*vect.imag() - this->orientation.imag()*vect.real();
 }
 
@@ -128,5 +128,10 @@ double Vec2::direction(const std::complex<double>& point)
 std::complex<double> Vec2::project(const std::complex<double>& vect)
 {
     std::complex<double> normVect  = vect - this->A;   // TODO: better aproach
-    return (dot(normVect, this->orientation)/(this->length*this->length))*orientation; + this->A;   // TODO: better aproach withput +this->A
+    std::complex<double> pos = (dot(normVect, this->orientation)/(this->length*this->length))*orientation + this->A;   // TODO: better aproach withput +this->A
+    if ((vecLength(pos - this->A)) <= this->length)
+    {
+        return pos;   
+    }
+    return this->B;
 }

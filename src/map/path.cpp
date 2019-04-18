@@ -241,31 +241,64 @@ EDGE_PTR Path::currentEdge(std::complex<double> coord)
     double min2 = min1;
     NODE_PTR node1= NULL;
     NODE_PTR node2= NULL;
-    for (auto &it : this->pathSet)
+    // for (auto &it : this->pathSet)
+    // {
+    //     double distance = euclideanHeuristic(it->coord(), coord);
+    //     if (distance < min1)
+    //     {
+    //         min2 = min1;
+    //         min1 = distance;
+    //         node2 = node1;
+    //         node1 = it;
+    //     }
+    //     else if (distance < min2 && distance != min1)
+    //     {
+    //         min2 = distance;
+    //         node2 = it;
+    //     }
+    // }
+    // if (node1 == NULL || node2 == NULL)     { return NULL; }
+    // EDGE_PTR e = this->pointerEdge(node1->name(), node2->name());
+    // if (e == nullptr)  { e = this->pointerEdge(node2->name(), node1->name()); }
+    // if (e==nullptr) { std::cout << node1->name() << " " << node2->name() << std::endl; }
+    EDGE_PTR e;
+    for (auto &it : this->edgePath)
     {
-        double distance = euclideanHeuristic(it->coord(), coord);
-        if (distance < min1)
+        double distanceFrom = euclideanHeuristic(it->from()->coord(), coord);
+        double distanceTo = euclideanHeuristic(it->to()->coord(), coord);
+        double minimum = std::min(distanceFrom, distanceTo);
+        double maximum = std::max(distanceFrom, distanceTo);
+        // std::cout << "inainte" << std::endl;
+        // vecLength(coord - it->from()->coord());
+        // std::cout << "inter" << std::endl;
+        // vecLength(coord - it->to()->coord());
+        // std::cout << "dupa" << std::endl;
+        // std::cout << min1 << " " << min2 << " " << floor(vecLength(it->project(coord) - it->from()->coord())*100)/100 << " " << floor(vecLength(it->project(coord) - it->to()->coord())*100)/100 << std::endl;
+        // std::cout << *it << " dist: " << (distanceFrom + distanceTo) << " min: " << min1 << std::endl;
+        if (
+            // minimum < min1 && 
+            // maximum < min2 && 
+            (distanceFrom + distanceTo) < min1 &&
+            it->length >= (vecLength(it->project(coord) - it->from()->coord())) &&
+            it->length >= (vecLength(it->project(coord) - it->to()->coord()))
+        )
         {
-            min2 = min1;
-            min1 = distance;
-            node2 = node1;
-            node1 = it;
+            // min1 = minimum;
+            // min2 = maximum;
+            min1 = (distanceFrom + distanceTo);
+            e = it;
+            // std::cout << *e << " coord: " << coord << " length0: " << floor(vecLength(coord - it->from()->coord())*100)/100 << " length1: " << it->length << std::endl;
         }
-        else if (distance < min2 && distance != min1)
-        {
-            min2 = distance;
-            node2 = it;
-        }
+        // std::cout << *it->from() << " " << *it->to() << std::endl;
     }
-    if (node1 == NULL || node2 == NULL)     { return NULL; }
-    EDGE_PTR e = this->pointerEdge(node1->name(), node2->name());
-    if (e == nullptr)  { e = this->pointerEdge(node2->name(), node1->name()); }
     return e;
 }
 
 double Path::displacement(std::complex<double> coord)
 {
     EDGE_PTR e = this->currentEdge(coord);
+    // std::cout << *e << std::endl;
+    // std::cout << *e << std::endl;
     return e->direction(coord);
 }
 

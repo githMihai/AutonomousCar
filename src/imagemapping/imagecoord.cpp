@@ -67,3 +67,10 @@ cv::Point2f ImageCoord::toImageCoord(const cv::Point2f point)
     }
     throw std::system_error(-1, std::generic_category(), "Point outside the map");
 }
+
+cv::Point2f ImageCoord::toMapCoord(const cv::Point2f point)
+{
+    double x = (point.x - this->startPoint.x)/100.0;
+    double y = (point.x - this->startPoint.y+22)/100.0;
+    return cv::Point2f(x, y);
+}

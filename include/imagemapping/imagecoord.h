@@ -59,6 +59,14 @@ public:
      */
     cv::Point2f toImageCoord(const cv::Point2f point);
 
+    /*!
+     * \name toMapCoord
+     * \brief Translate a point from the image into map.
+     * \param point 
+     * \return cv::Point2f 
+     */
+    cv::Point2f toMapCoord(const cv::Point2f point);
+
     // void toImageVector(std::complex<double> pA, std::complex<double> pB, )
 private:
     cv::Point2f startPoint;
