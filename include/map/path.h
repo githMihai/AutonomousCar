@@ -124,6 +124,14 @@ public:
      */
     double displacement(std::complex<double> coord);
 
+    /*!
+     * \name pathPos
+     * \brief Returns position on the coresponding path element
+     * \param coord 
+     * \return std::complex<double> 
+     */
+    std::complex<double> pathPos(std::complex<double> coord);
+
     NodesVect pathSet;
     EdgesVect edgePath;
 

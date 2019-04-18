@@ -27,6 +27,15 @@ set(SOURCE_FILES
     ./src/map/vec2.cpp
     ./src/map/pathtracking.cpp
     ./src/map/heuristics.cpp
+    ./src/imagemapping/point.cpp
+    ./src/imagemapping/line.cpp
+    ./src/imagemapping/imagecoord.cpp
+    ./src/imagemapping/maprepresentation.cpp
+
+    ./src/testPoint.cpp
+    ./src/testLine.cpp
+    ./src/imagecoordTest.cpp
+    ./src/mapreprTest.cpp
     # ./lib/serial/src/serial.cc
 )
 # ===================================
@@ -37,6 +46,7 @@ include_directories(
     ./include/serialhandler
     ./include/socket
     ./include/map
+    ./include/imagemapping
     ./src
     ./lib/serial/include
     ${JSONCPPPATH}/include
@@ -68,7 +78,8 @@ set( OpenCV_DIR "/usr/lib/opencv" )
 
 FIND_PACKAGE(Threads REQUIRED)  
 FIND_PACKAGE(PkgConfig REQUIRED)
-FIND_PACKAGE(OpenCV REQUIRED COMPONENTS core imgproc highgui)
+# FIND_PACKAGE(OpenCV REQUIRED COMPONENTS core imgproc highgui)
+FIND_PACKAGE(OpenCV REQUIRED)
 
 pkg_check_modules(JSONCPP jsoncpp)
 link_libraries(${JSONCPP_LIBRARIES})

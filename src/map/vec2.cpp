@@ -121,11 +121,12 @@ double Vec2::cross(const std::complex<double>& vect)
 
 double Vec2::direction(const std::complex<double>& point)
 {
-    std::complex<double> normPoint  = point - this->A;
+    std::complex<double> normPoint  = point - this->A;  // TODO: better aproach
     return this->cross(normPoint)/this->length;
 }
 
 std::complex<double> Vec2::project(const std::complex<double>& vect)
 {
-    return (dot(vect, this->orientation)/(this->length*this->length))*orientation;
+    std::complex<double> normVect  = vect - this->A;   // TODO: better aproach
+    return (dot(normVect, this->orientation)/(this->length*this->length))*orientation; + this->A;   // TODO: better aproach withput +this->A
 }

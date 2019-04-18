@@ -20,7 +20,8 @@ Map::Map(const std::string jsonFilePath)
     else 
     {
         std::cerr << "Map: " << strerror(errno) << std::endl;
-        throw std::system_error(errno, std::generic_category(), strerror(errno));
+        std::string msg = strerror(errno) + std::string(" - try to run executable from project root specifying the path './build.drive'");
+        throw std::system_error(errno, std::generic_category(), msg.c_str());
     }
 
     if (!reader.parse(jsonMap, root))
@@ -131,6 +132,7 @@ void Map::setStart(std::string nodeName)    { this->start = this->nodesSet[nodeN
 
 Map& Map::getInstance()
 {
-    static Map instance("/home/mihai/Workspace/BOSCH_2019/Holistic2_v2/master/resources/Map.json");
+    // static Map instance("/home/mihai/Workspace/BOSCH_2019/Holistic2_v2/master/resources/Map.json");
+    static Map instance("resources/Map.json");
     return instance;
 }

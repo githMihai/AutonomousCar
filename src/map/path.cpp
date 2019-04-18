@@ -2,6 +2,7 @@
 #include "path.h"
 #endif // PATH_H
 
+#include <functional>
 #include <algorithm>
 #include <queue>
 
@@ -13,12 +14,19 @@
 #include "heuristics.h"
 #endif // HEURISTICS_H
 
+#ifndef VEC2_H
+#include "vec2.h"
+#endif // VEC2_H
+
 bool operator<(const NODE_PTR& n1, const NODE_PTR& n2)
 {
     return n1->cost() > n2->cost();
 }
 
-
+bool compare(const NODE_PTR& n1, const NODE_PTR& n2)
+{
+    return n1->cost() > n2->cost();
+}
 
 Path::Path(NODE_PTR startingNode, NODE_PTR destinationNode)
 {
@@ -95,7 +103,7 @@ bool Path::isDestination(NODE_PTR node)
 
 void Path::aStar(NODE_PTR startNode)
 {
-    std::priority_queue<NODE_PTR> frontier;
+    std::priority_queue<NODE_PTR, std::vector<NODE_PTR>, std::function<bool(NODE_PTR, NODE_PTR)>> frontier(compare);
     NodesVect explored;
     NodesVect explorable;
 
@@ -159,7 +167,8 @@ void Path::aStar(NODE_PTR startNode)
 
             if (found == false && ok)
             {
-                to_explore->cost_ += manhattanHeuristic(to_explore->coord(), this->destination()->coord());
+                // to_explore->cost_ += manhattanHeuristic(to_explore->coord(), this->destination()->coord());
+                to_explore->cost_ += euclideanHeuristic(to_explore->coord(), this->destination()->coord());
                 frontier.push(to_explore);
                 explorable.push_back(to_explore);
             }
@@ -178,8 +187,34 @@ void Path::makeEdges()
             this->pathSet.at(i+1),
             1
         );
-        this->edgePath.push_back(e);
-        this->addEdge(e);
+        int pSize = this->edgePath.size();
+        if (pSize > 0)
+        {
+            EDGE_PTR pE = this->edgePath.at(pSize-1);
+            // TODO: dot roduct
+            if ((pE->orientation.real() * e->orientation.real()) + (pE->orientation.imag() * e->orientation.imag()) == 0)
+            {
+                EDGE_PTR newEdge = std::make_shared<Edge>(
+                    pE->from(), 
+                    e->to(), 
+                    1
+                );
+                this->edgePath.pop_back();
+                this->edgePath.push_back(newEdge);
+                this->removeEdge(pE->from()->name(), pE->to()->name());
+                this->addEdge(newEdge);
+            }
+            else
+            {
+                this->edgePath.push_back(e);
+                this->addEdge(e);
+            }
+        }
+        else
+        {
+            this->edgePath.push_back(e);
+            this->addEdge(e);
+        }
     }
 }
 
@@ -232,4 +267,10 @@ double Path::displacement(std::complex<double> coord)
 {
     EDGE_PTR e = this->currentEdge(coord);
     return e->direction(coord);
+}
+
+std::complex<double> Path::pathPos(std::complex<double> coord)
+{
+    EDGE_PTR e = this->currentEdge(coord);
+    return e->project(coord);
 }

@@ -1,3 +1,4 @@
+#if 0
 #include "serialhandler.h"
 #include <unistd.h>
 #include <messageconverter.h>
@@ -260,13 +261,15 @@ int main()
 // TODO
 int main(int argc, char *argv[])
 {
+    PathTracking path("NOD1", "NOD133");
     //    GPSConnection* g = new GPSConnection(4, 12346);
-        GPSConnection *g = new GPSConnection(4, 12346);
+        GPSConnection *g = new GPSConnection(1, 12346);
     //    g.run();
-        GPSData gpsData = GPSData(4, std::complex<double>(0,0), std::complex<double>(0,0));
+        // GPSData gpsData = GPSData(1, std::complex<double>(0,0), std::complex<double>(0,0));
         std::thread run (&GPSConnection::getServer, g);
-        std::thread getPoz (&GPSConnection::getPositionData, g, &gpsData);
+        std::thread getPoz (&GPSConnection::getPositionData, g, path.globalPosition_);
 
+        std::thread running (&PathTracking::update_thread, path); 
         run.join();
         getPoz.join();
 
@@ -313,6 +316,7 @@ int main(int argc, char *argv[])
     //        }
     //    }
 
+    // const std::string JSON_PATH = "/home/mihai/Workspace/BOSCH_2019/Holistic2_v2/master/resources/Map.json";
     const std::string JSON_PATH = "/home/mihai/Workspace/BOSCH_2019/Holistic2_v2/master/resources/Map.json";
     // std::string line;
     // std::string mapJson;
@@ -331,57 +335,75 @@ int main(int argc, char *argv[])
     // }
 
 // TODO
-    // // Map m(JSON_PATH);
-    // // Map::getInstance();
-    // // Map m;
-    // // m->getInstance();
-    // Map::getInstance().linkNodes();
-    // // for (auto & node : m.nodesMap)
-    // // {
-    // //     std::cout << node.second->name() << std::endl;
-    // //     // std::cout << node.second->name() << std::cout;
-    // // }
+    // Map m(JSON_PATH);
+    // Map::getInstance();
+    // Map m;
+    // m->getInstance();
+    Map::getInstance().linkNodes();
+    // for (auto & node : m.nodesMap)
+    // {
+    //     std::cout << node.second->name() << std::endl;
+    //     // std::cout << node.second->name() << std::cout;
+    // }
 
-    // // std::cout << Map::getInstance().nodesSet["NOD0"]->outAhead << std::endl;
-    // // std::cout << Map::getInstance()["NOD1"] << std::endl;
-    // NodesVect nodes = Map::getInstance()[std::complex<double>(0, 4.5)];
-    // // for (auto const &node : nodes)
-    // // {
-    // //     std::cout << "from coord: " << *node << std::endl;
-    // // }
-    // // NodesVect succ;
-    // // Map::getInstance()["NOD24"].successors(succ);
+    // std::cout << Map::getInstance().nodesSet["NOD0"]->outAhead << std::endl;
+    // std::cout << Map::getInstance()["NOD1"] << std::endl;
+    NodesVect nodes = Map::getInstance()[std::complex<double>(0, 4.5)];
+    // for (auto const &node : nodes)
+    // {
+    //     std::cout << "from coord: " << *node << std::endl;
+    // }
+    // NodesVect succ;
+    // Map::getInstance()["NOD24"].successors(succ);
     
-    // // for (auto const &node : succ)
-    // // {
-    // //     std::cout << "from succ: " << *node << std::endl;
-    // // }
+    // for (auto const &node : succ)
+    // {
+    //     std::cout << "from succ: " << *node << std::endl;
+    // }
 
-    // // for (auto const  &edge : Map::getInstance().edgesSet)
-    // // {
-    // //     std::cout << *edge.second << std::endl;
-    // // }
+    // for (auto const  &edge : Map::getInstance().edgesSet)
+    // {
+    //     std::cout << *edge.second << std::endl;
+    // }
 
-    // // PathTracking p(std::complex<double>(0, 4.5), std::complex<double>(7.65,3.15));
+    // PathTracking p(std::complex<double>(0, 4.5), std::complex<double>(7.65,3.15));
 
-    // std::cout <<  *Map::getInstance().closest(std::complex<double>(0, 4.8)) << std::endl;
+    std::cout <<  *Map::getInstance().closest(std::complex<double>(0, 4.8)) << std::endl;
 
-    // // Path p(Map::getInstance().nodePointer("NOD1"), Map::getInstance().nodePointer("NOD133"));
-    // // for (auto &node : p.pathSet)
-    // // {
-    // //     std::cout << "path: " << *node << std::endl;
-    // // }
-
-    // Path p("NOD1", "NOD133");
+    // Path p(Map::getInstance().nodePointer("NOD1"), Map::getInstance().nodePointer("NOD133"));
     // for (auto &node : p.pathSet)
     // {
     //     std::cout << "path: " << *node << std::endl;
     // }
-    // std::cout << *p.closest(std::complex<double>(1.4, 2)) << std::endl;
+
+    // Path p("NOD1", "NOD133");
+    // // for (auto &node : p.pathSet)
+    // // {
+    // //     std::cout << "path: " << *node << std::endl;
+    // // }
+    // // std::cout << *p.closest(std::complex<double>(1.4, 2)) << std::endl;
 
     // for (auto &edge : p.edgesSet)
     // {
     //     std::cout << "path: " << *edge.second << std::endl;
+    // }
+
+    // PathTracking path("NOD1", "NOD133");
+    // // std::thread running (&PathTracking::update_thread, path);
+    // // path.run();
+    // std::thread run1 (&GPSConnection::getServer, path.g_);
+    // std::thread getPoz (&GPSConnection::getPositionData, path.g_, path.globalPosition_);
+    // sleep(6);
+    // std::thread run2 (&PathTracking::update_thread, path);
+
+    // run1.join();
+    // getPoz.join();
+    // run2.join();
+    // running.join();
+    
+    // for (auto &edge : p.edgePath)
+    // {
+    //     std::cout << "path: " << *edge << std::endl;
     // }
 
     // std::cout << *p.currentEdge(std::complex<double>(2.5, 2.3)) << std::endl;
@@ -446,3 +468,5 @@ int main(int argc, char *argv[])
 
 //    return 0;
 //}
+
+#endif
