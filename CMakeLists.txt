@@ -17,6 +17,7 @@ set(SOURCE_FILES
     ./src/serialhandler/filehandler.cpp 
     ./src/serialhandler/messageconverter.cpp 
     ./src/serialhandler/serialhandler.cpp 
+    ./src/serialhandler/findfile.cpp
     ./src/socket/socket.cpp
     ./src/map/map.cpp
     ./src/map/node.cpp
@@ -31,11 +32,15 @@ set(SOURCE_FILES
     ./src/imagemapping/line.cpp
     ./src/imagemapping/imagecoord.cpp
     ./src/imagemapping/maprepresentation.cpp
+    ./src/carcontrol/carcontrol.cpp
 
     ./src/testPoint.cpp
     ./src/testLine.cpp
     ./src/imagecoordTest.cpp
     ./src/mapreprTest.cpp
+    ./src/moveTest.cpp
+
+    ./include/serialhandler/connexc.h
     # ./lib/serial/src/serial.cc
 )
 # ===================================
@@ -47,6 +52,7 @@ include_directories(
     ./include/socket
     ./include/map
     ./include/imagemapping
+    ./include/carcontrol
     ./src
     ./lib/serial/include
     ${JSONCPPPATH}/include
@@ -102,5 +108,6 @@ target_link_libraries( ${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} )
 target_link_libraries( ${PROJECT_NAME} ${JSONCPP_LIBRARIES} )
 target_link_libraries( ${PROJECT_NAME} serial )
 target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} )
+target_link_libraries(${PROJECT_NAME} stdc++fs)
 # target_link_libraries( ${PROJECT_NAME} serial )
 # ===================================

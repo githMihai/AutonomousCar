@@ -8,6 +8,8 @@
 #include <condition_variable>
 #include <map>
 #include <functional>
+#include <chrono>
+#include <atomic>
 
 #ifndef MESSAGECONVERTER_H
 #include "messageconverter.h"
@@ -17,10 +19,17 @@
 #include "filehandler.h"
 #endif
 
+#ifndef FINDFILE_H
+#include "findfile.h"
+#endif // FINDFILE_H
+
+#define STM_BAUDRATE 460800
+
 /*!
  * FnPtr defins a pointer to a function that has a string as parameter
  */
-typedef void (*FnPtr)(std::string);
+// typedef void (*FnPtr)(std::string);
+typedef void* (*FnPtr)(void*);
 typedef std::vector<FnPtr> CallbackEvent;
 
 /*!
@@ -48,7 +57,14 @@ public:
      * \brief Function for sending a message(command).
      * \param message   message to be sent
      */
-    void send(const char* message);
+    bool send(const char* message);
+
+    /*!
+     * \name send
+     * \brief Function for sending a message(command).
+     * \param message   message to be sent
+     */
+    bool send(const std::string  message);
 
     /*!
      * \name sendMove
@@ -142,14 +158,14 @@ public:
      * \param key               message key
      * \param callbackFunction  callback function
      */
-    void addWaiter(std::string key, FnPtr callbackFunction);
+    void addWaiter(const std::string key, FnPtr callbackFunction);
 
     /*!
      * \name checkWaiter
      * \brief Method for checking the waiter functions set the SerialHandler class and for setting callback events.
      * \param response  response transmitted
      */
-    void checkWaiter(std::string response);
+    void checkWaiter(const std::string response);
 
     /*!
      * \name deleteWaiter
@@ -157,7 +173,23 @@ public:
      * \param key               message key
      * \param callbackFunction  callback function
      */
-    void deleteWaiter(std::string key, FnPtr callbackFunction); //TODO not implemented
+    void deleteWaiter(const std::string key, FnPtr callbackFunction); //TODO not implemented
+
+    /*!
+     * \name waitWaiter
+     * \brief Wait for response for the waiter event.
+     * \param key   expected event
+     * \param timeout 
+     * \return success status, True if no error
+     */
+    bool waitWaiter(const std::string key, const double timeout);
+
+    /*!
+     * \name clearWaiter
+     * \brief Clear the bit in acks corresponding for ke
+     * \param key 
+     */
+    void clearWaiter(const std::string key);
 
     /*!
      * \name stopThread
@@ -179,6 +211,9 @@ private:
     std::string buff;
     std::thread th;
     std::map<std::string, CallbackEvent > waiters;
+    std::map<std::string, bool> acks;
+    std::map<std::string, std::condition_variable> condVars;
+    std::map<std::string, std::mutex> mutexes;
 };
 
 #endif // SERIALHANDLER_H
