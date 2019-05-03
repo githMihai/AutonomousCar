@@ -5,6 +5,8 @@
 #include "serialhandler.h"
 #endif // SERIALHANDELR_H
 
+#define DEFAULT_TIMEOUT 3.0
+
 enum active_functions
 {
     DISABLE_ALL                 = 0,
@@ -34,14 +36,18 @@ public:
     void enableEncoder() throw();
     /*!
      * \name enableEncoder
-     * \brief Enable Encoder and call the sepcified function every time a new value for encoder is received.
-     * throw CommunicationException
+     * \brief   Enable Encoder and call the sepcified function every time a new value for encoder is received.
+     *          Node: The callback function of type FnPtr can receive any insput of type (void*). Usually it
+     *          it receive a string of numbers or the string 'ack' but you allways need to validate the input
+     *          parameter.
+     * \param callbackFunc function that will be called every time a new value is read from the encoder
+     * \throw CommunicationException
      */
-    void enableEncoder(FnPtr) throw();
+    void enableEncoder(FnPtr callbackFunc) throw();
 
     /*!
      * \name disableEncoder
-     * \brief Disable Encoder publisher
+     * \brief Disable Encoder publisher.
      * \throw CommunicationException
      */
     void disableEncoder() throw();
@@ -94,6 +100,24 @@ public:
     void moveDistance(const double distance, const double angle) throw();
 
     /*!
+     * \name moveBezier
+     * \brief Send moveBezier command and the car will follow the path described by the spline given the 4 points
+     * \param A           first coordinate on the curve
+     * \param B           second coordinate on the curve
+     * \param C           third coordinate on the curve
+     * \param D           forth coordinate on the curve
+     * \param tim         movemet duration in seconds
+     * \param isForward   forward/backward movement
+     * \param isForward 
+     */
+    void moveBezier(const std::complex<double> A,
+                    const std::complex<double> B,
+                    const std::complex<double> C,
+                    const std::complex<double> D,
+                    double time,
+                    bool isForward);
+
+    /*!
      * \enable
      * \brief   Enables and disables different features specified by flag argument: 
      *          DISABLE_ALL, PID_ACTIVATION, ENCODER_PUBLISHER, SAFETTY_STOP, DISTANCE_SENSORS_PUBLISHER
@@ -122,9 +146,22 @@ public:
      * \brief Close serial connection anf stop threads
      */
     void close();
+
+    /*!
+     * \brief Set the Timeout
+     * \param timeout_ 
+     */
+    void setTimeout(double timeout_);
+
+    /*!
+     * \brief Get the Timeout
+     * \return double 
+     */
+    double getTimeout();
 private:
     SerialHandler serialHandler;
     uint8_t flags;
+    double timeout;
 };
 
 #endif // CARCONTROL_H

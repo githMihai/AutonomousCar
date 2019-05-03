@@ -10,6 +10,7 @@
 #include <functional>
 #include <chrono>
 #include <atomic>
+#include <complex>
 
 #ifndef MESSAGECONVERTER_H
 #include "messageconverter.h"
@@ -29,7 +30,10 @@
  * FnPtr defins a pointer to a function that has a string as parameter
  */
 // typedef void (*FnPtr)(std::string);
-typedef void* (*FnPtr)(void*);
+#ifndef FN_PTR
+// typedef void* (*FnPtr)(void*);
+typedef std::function<void(void*)> FnPtr;
+#endif // FN_PTR
 typedef std::vector<FnPtr> CallbackEvent;
 
 /*!
@@ -125,6 +129,26 @@ public:
      * \return success status, True if no error
      */
     bool sendEncoderActivation(bool activate);
+
+    /*!
+     * \name sendBezierCurve
+     * \brief Function for sending bezier command.
+     * \param f_A           first coordinate on the curve
+     * \param f_B           second coordinate on the curve
+     * \param f_C           third coordinate on the curve
+     * \param f_D           forth coordinate on the curve
+     * \param time          movemet duration in seconds
+     * \param isForward     forward/backward movement
+     * \return true 
+     * \return false 
+     */
+    bool sendBezierCurve(   std::complex<double> f_A, 
+                            std::complex<double> f_B,
+                            std::complex<double> f_C,
+                            std::complex<double> f_D,
+                            double time,
+                            bool isForward
+                        );
 
     /*!
      * \name close

@@ -3,6 +3,10 @@
 
 #include <opencv2/opencv.hpp>
 
+#ifndef CV_LOAD_IMAGE_COLOR
+// #ifdef IMREAD_COLOR
+#define CV_LOAD_IMAGE_COLOR cv::IMREAD_COLOR
+
 class ImageCoord
 {
 public:
@@ -74,5 +78,6 @@ private:
     int pointDistance;
 };
 
-
+// #endif // IMREAD_COLOR
+#endif // CV_LOAD_IMAGE_COLOR
 #endif // IMAGECOORD_H

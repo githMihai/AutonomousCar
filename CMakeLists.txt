@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0.0)
 project(drive VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "-fpermissive")
+set(CMAKE_CXX_FLAGS "-fpermissive -O3")
 
 # Enable testing
 include(CTest)
@@ -33,12 +33,17 @@ set(SOURCE_FILES
     ./src/imagemapping/imagecoord.cpp
     ./src/imagemapping/maprepresentation.cpp
     ./src/carcontrol/carcontrol.cpp
+    ./src/image/image.cpp
+    ./src/timer/timer.cpp
 
     ./src/testPoint.cpp
     ./src/testLine.cpp
     ./src/imagecoordTest.cpp
     ./src/mapreprTest.cpp
     ./src/moveTest.cpp
+    ./src/gpsTest.cpp
+    ./src/imageTest.cpp
+    ./src/timerTest.cpp
 
     ./include/serialhandler/connexc.h
     # ./lib/serial/src/serial.cc
@@ -53,6 +58,9 @@ include_directories(
     ./include/map
     ./include/imagemapping
     ./include/carcontrol
+    ./include/observer
+    ./include/image
+    ./include/timer
     ./src
     ./lib/serial/include
     ${JSONCPPPATH}/include

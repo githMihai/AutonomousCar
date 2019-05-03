@@ -8,6 +8,7 @@
 #include <cmath>
 #include <vector>
 #include <netdb.h>
+#include <thread>
 
 #ifndef SOCKET_H
 #include "socket.h"
@@ -17,10 +18,14 @@
 #include "gpsdata.h"
 #endif
 
+#ifndef OBSERVER_H
+#include "observer.h"
+#endif // OBSERVER_H
+
 /*!
  * \brief The GPSConnection class, contains functions for receiving position from GPS server
  */
-class GPSConnection
+class GPSConnection : public Subject
 {
 public:
     /*!
@@ -57,7 +62,14 @@ public:
      * \brief Utility function for receiving the car position and orientation from the server.
      * \param gpsData   GPSData to be updated
      */
-    void getPositionData(GPSData *gpsData);
+    // void getPositionData(GPSData *gpsData);
+    void getPositionData();
+
+    /*!
+     * \name start
+     * \brief start threads for connecting to server and for getting current position
+     */
+    void start();
 
     /*!
      * \name stop
@@ -72,13 +84,15 @@ public:
      * \param msg       String message read from GPS server
      * \param gpsData   GPSData to be updated
      */
-    void msg2data(std::string msg, GPSData* gpsData);
+    void msg2data(std::string msg, GPSData& gpsData);
 
+    GPSData position;
 private:
     // Car related data
     int thisCarId;
-    std::complex<double> carOrientation;
-    std::complex<double> carPos;
+    // std::complex<double> carOrientation;
+    // std::complex<double> carPos;
+    // GPSData position;
 
     // Communication parameters
     std::string serverIP;
@@ -101,6 +115,9 @@ private:
     Socket GSocketPoz;
     bool runCarClient;
 
+    // threads
+    std::thread server;
+    std::thread localization;
 };
 
 #endif // GPSCONNECTION_H

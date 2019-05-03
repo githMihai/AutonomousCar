@@ -9,9 +9,14 @@
 #include "edgeset.h"
 #endif // EDGESET_H
 
-class Path : public NodeSet, public EdgeSet
+class Path
 {
 public:
+    /*!
+     * \brief Construct a new Path object
+     */
+    Path();
+
     /*!
      * \name Path
      * \brief Construct a new Path object.
@@ -132,12 +137,26 @@ public:
      */
     std::complex<double> pathPos(std::complex<double> coord);
 
-    NodesVect pathSet;
-    EdgesVect edgePath;
+    /*!
+     * \name getNodesInPath
+     * \brief Get the Nodes In Path object
+     * \return const NodesVect 
+     */
+    const NodesVect getNodesInPath() const;
+
+    /*!
+     * \name getEdgesInPath
+     * \brief Get the Edges In Path object
+     * \return const EdgesVect 
+     */
+    const EdgesVect getEdgesInPath() const;
 
 private:
     NODE_PTR start_;
     NODE_PTR destination_;
+
+    NodesVect pathSet;
+    EdgesVect edgePath;
     // NodesVect pathSet;
 };
 

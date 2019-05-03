@@ -9,12 +9,16 @@
 #include "gpsdata.h"
 #endif // GPSDATA_H
 
+#ifndef OBSERVER_H
+#include "observer.h"
+#endif // OBSERVER_H
+
 // TODO: temporary
 #ifndef GPSCONNECTION_H
 #include "gpsconnection.h"
 #endif // GPSCONNECTION_H
 
-class PathTracking
+class PathTracking : public IObserver
 {
 public:
     /*!
@@ -29,60 +33,44 @@ public:
      */
     PathTracking(const std::string startingNode, const std::string destinationNode);
 
-    PathTracking(const PathTracking& pathTracking)
-    {
-        this->g_ = pathTracking.g_;
-        this->globalPosition_ = pathTracking.globalPosition_;
-        this->running = pathTracking.running;
-        this->displ = pathTracking.displ;
-        this->path = pathTracking.path;
-    }
+    /*!
+     * \name PahtTracking
+     * \brief Copy constructor
+     * \param pathTracking 
+     */
+    PathTracking(const PathTracking& pathTracking);
     
     /*!
      * \name globalPosition
-     * \brief Getter for globalPosition_.
-     * \return const GPSData& 
+     * \brief Getter for globalPosition_
+     * \return GPSData 
      */
-    const GPSData& globalPosition() const;
+    GPSData globalPosition();
 
     /*!
      * \name pathPosition
-     * \brief Getter fot pathPosition_.
-     * \return const GPSData& 
+     * \brief Getter for pathPosition_
+     * \return GPSData 
      */
-    const GPSData& pathPosition() const;
-
+    GPSData pathPosition();
 
     /*!
-     * \name update
-     * \brief Updates position.
+     * \name displacement
+     * \brief Getter for displ_
+     * \return double 
      */
-    void update_thread();
+    double displacement();
 
+    void update(Subject* subject) override;
 
     void run();
 
-    // PathTracking(const PathTracking& pathFollower);
-    // PathTracking& operator=(const PathTracking& pathFollower);
-
-    Path* path;
-    GPSData* globalPosition_;
-    GPSData pathPosition_;
-    std::shared_ptr<GPSConnection> g_;
-    double displ;
-    
-    bool running;
-
 private:
-    // PathTracking(const PathTracking& pathFollower);
-    // PathTracking& operator=(const PathTracking& pathFollower);
-
-    // GPSData globalPosition_;
-    // GPSData pathPosition_;
-    // std::shared_ptr<GPSConnection> g_;
-    // double displ;
-    
-    // bool running;
+    Path path;
+    GPSData globalPosition_;
+    GPSData pathPosition_;
+    double displ_;
+    bool running;
 };
 
 #endif // PATHTRACKING_H

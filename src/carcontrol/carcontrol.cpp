@@ -8,18 +8,7 @@ void* ackFunction(void*) {}
 CarControl::CarControl() : serialHandler()
 {
     this->flags = DISABLE_ALL;
-}
-
-// void p(std::string c)
-void* p(void* c)
-{
-    std::cout << "merge " << std::string((char*)c) << std::endl;
-    // std::cout << "merge " << c << std::endl;
-}
-
-void* ack(void*)
-{
-    std::cout << "ack" << std::endl;
+    this->timeout = DEFAULT_TIMEOUT;
 }
 
 void CarControl::enable(const uint8_t flag) throw()
@@ -37,7 +26,7 @@ void CarControl::enable(const uint8_t flag) throw()
             sent = this->serialHandler.sendEncoderActivation(enableEncoderPublisher);
             if (sent)
             {
-                if(this->serialHandler.waitWaiter("ENPB", 3.0))
+                if(this->serialHandler.waitWaiter("ENPB", this->timeout))
                 {
                     std::cout << "Encoder publisher " << enableEncoderPublisher << std::endl;
                 }
@@ -59,7 +48,7 @@ void CarControl::enable(const uint8_t flag) throw()
             sent = this->serialHandler.sendPidActivation(enablePID);
             if (sent)
             {
-                if (this->serialHandler.waitWaiter("PIDA", 3.0))
+                if (this->serialHandler.waitWaiter("PIDA", this->timeout))
                 {
                     std::cout << "PID " << enablePID << std::endl;
                 }
@@ -81,7 +70,7 @@ void CarControl::enable(const uint8_t flag) throw()
             sent = this->serialHandler.sendSafetyStopActivation(enableSafetyStop);
             if (sent)
             {
-                if (this->serialHandler.waitWaiter("SFBR", 3.0))
+                if (this->serialHandler.waitWaiter("SFBR", this->timeout))
                 {
                     std::cout << "Safety stop " << enableSafetyStop << std::endl;
                 }
@@ -103,7 +92,7 @@ void CarControl::enable(const uint8_t flag) throw()
             sent = this->serialHandler.sendDistanceSensorPublisherActivation(enableDistanceSensorsPubliser);
             if (sent)
             {
-                if (this->serialHandler.waitWaiter("DSPB", 3.0))
+                if (this->serialHandler.waitWaiter("DSPB", this->timeout))
                 {
                     std::cout << "Distance Sensors publisher " << enableDistanceSensorsPubliser << std::endl;
                 }
@@ -129,7 +118,7 @@ void CarControl::enableEncoder() throw()
     sent = this->serialHandler.sendEncoderActivation(true);
     if (sent)
     {
-        if(this->serialHandler.waitWaiter("ENPB", 3.0))
+        if(this->serialHandler.waitWaiter("ENPB", this->timeout))
         {
             std::cout << "Encoder publisher activated " << std::endl;
         }
@@ -153,7 +142,7 @@ void CarControl::enableEncoder(FnPtr callbackFunc) throw()
     sent = this->serialHandler.sendEncoderActivation(true);
     if (sent)
     {
-        if(this->serialHandler.waitWaiter("ENPB", 3.0))
+        if(this->serialHandler.waitWaiter("ENPB", this->timeout))
         {
             std::cout << "Encoder publisher activated " << std::endl;
         }
@@ -178,7 +167,7 @@ void CarControl::disableEncoder() throw()
     sent = this->serialHandler.sendEncoderActivation(false);
     if (sent)
     {
-        if(this->serialHandler.waitWaiter("ENPB", 3.0))
+        if(this->serialHandler.waitWaiter("ENPB", this->timeout))
         {
             std::cout << "Encoder publisher activated " << std::endl;
         }
@@ -203,7 +192,7 @@ void CarControl::enablePID() throw()
     sent = this->serialHandler.sendPidActivation(true);
     if (sent)
     {
-        if (this->serialHandler.waitWaiter("PIDA", 3.0))
+        if (this->serialHandler.waitWaiter("PIDA", this->timeout))
         {
             std::cout << "PID activated" << std::endl;
         }
@@ -228,7 +217,7 @@ void CarControl::disablePID() throw()
     sent = this->serialHandler.sendPidActivation(false);
     if (sent)
     {
-        if (this->serialHandler.waitWaiter("PIDA", 3.0))
+        if (this->serialHandler.waitWaiter("PIDA", this->timeout))
         {
             std::cout << "PID activated" << std::endl;
         }
@@ -253,7 +242,7 @@ void CarControl::move(const double speed, const double angle) throw()
     sent = this->serialHandler.sendMove(speed, angle);
     if (sent)
     {
-        if (this->serialHandler.waitWaiter("MCTL", 3.0))
+        if (this->serialHandler.waitWaiter("MCTL", this->timeout))
         {
             std::cout << "MCTL received" << std::endl;
         }
@@ -277,7 +266,7 @@ void CarControl::brake(double angle) throw()
     sent = this->serialHandler.sendBrake(angle);
     if (sent)
     {
-        if (this->serialHandler.waitWaiter("BRAK", 3.0))
+        if (this->serialHandler.waitWaiter("BRAK", this->timeout))
         {
             std::cout << "BRAK received" << std::endl;
         }
@@ -293,7 +282,41 @@ void CarControl::brake(double angle) throw()
     this->serialHandler.deleteWaiter("BRAK", ackFunction);
 }
 
+void CarControl::moveBezier(
+                    const std::complex<double> A,
+                    const std::complex<double> B,
+                    const std::complex<double> C,
+                    const std::complex<double> D,
+                    double time,
+                    bool isForward
+)
+{
+    bool sent = false;
+
+    this->serialHandler.addWaiter("SPLN", ackFunction);
+    sent = this->serialHandler.sendBezierCurve(A, B, C, D, time, true);
+    if (sent)
+    {
+        if (this->serialHandler.waitWaiter("SPLN", this->timeout))
+        {
+            std::cout << "SPLN received" << std::endl;
+        }
+        else
+        {
+            throw ConnectionException("Response was not received!", -1, 0);
+        }
+    }
+    else
+    {
+        std::cout << "sending problem" << std::endl;
+    }
+    this->serialHandler.deleteWaiter("SPLN", ackFunction);
+}
+
 void CarControl::close()
 {
     this->serialHandler.close();
 }
+
+void CarControl::setTimeout(double timeout_)    { this->timeout = timeout_; }
+double CarControl::getTimeout()                 { return this->timeout; }

@@ -47,8 +47,12 @@ GPSConnection::GPSConnection(int carID, uint16_t negotiationPort)
     this->carSubscriptionPort = this->negotiationPort + 2;
     this->carCommunicationPort = this->carSubscriptionPort + 2;
     this->maxWaitTimeForServer = 10;
-    this->carPos = std::complex<double>(0,0);
-    this->carOrientation = std::complex<double>(0,0);
+    // this->carPos = std::complex<double>(0,0);
+    // this->carOrientation = std::complex<double>(0,0);
+    this->position = GPSData(   this->carId, 
+                                std::complex<double>(0,0),
+                                std::complex<double>(0,0)
+                            );
     this->newServerIP = false;
     this->startUp = true;
     this->GSocketPoz = Socket(AF_INET, SOCK_STREAM, 0);
@@ -70,8 +74,9 @@ GPSConnection& GPSConnection::operator= (const GPSConnection &gps)
     this->carSubscriptionPort = gps.carSubscriptionPort;
     this->carCommunicationPort = gps.carCommunicationPort;
     this->maxWaitTimeForServer = gps.maxWaitTimeForServer;
-    this->carPos = gps.carPos;
-    this->carOrientation = gps.carOrientation;
+    // this->carPos = gps.carPos;
+    // this->carOrientation = gps.carOrientation;
+    this->position = gps.position;
     this->newServerIP = gps.newServerIP;
     this->startUp = gps.startUp;
     this->GSocketPoz = gps.GSocketPoz;
@@ -193,7 +198,8 @@ void GPSConnection::sendIDToServer(std::string newServer)
     }
 }
 
-void GPSConnection::getPositionData(GPSData *gpsData)
+// void GPSConnection::getPositionData(GPSData *gpsData)
+void GPSConnection::getPositionData()
 {
     while (this->runCarClient)
     {
@@ -248,8 +254,10 @@ void GPSConnection::getPositionData(GPSData *gpsData)
                     std::string buf;
                     buf = c->recv(4096);
                     std::cout << "received: " << buf << std::endl;
-                    this->msg2data(buf, gpsData);
-                    std::cout << *gpsData << std::endl;
+                    this->msg2data(buf, this->position);
+                    // std::cout << *gpsData << std::endl;
+                    std::cout << this->position << std::endl;
+                    this->notifyObservers();
                     c->close();
                     c.reset();
                 }
@@ -270,7 +278,7 @@ void GPSConnection::getPositionData(GPSData *gpsData)
     }
 }
 
-void GPSConnection::msg2data(std::string msg, GPSData* gpsData)
+void GPSConnection::msg2data(std::string msg, GPSData& gpsData)
 {
     const int ID_IDX = 1;
     const int POS_REAL_IDX = 2;
@@ -293,9 +301,22 @@ void GPSConnection::msg2data(std::string msg, GPSData* gpsData)
         int id = std::stoi(sm[ID_IDX]);
         std::complex<double> pos(std::stod(sm[POS_REAL_IDX]), std::stod(sm[POS_IMAG_IDX]));
         std::complex<double> azm(std::stod(sm[AZM_REAL_IDX]), std::stod(sm[AZM_IMAG_IDX]));
-        if (gpsData->getId() == id)
+        if (gpsData.getId() == id)
         {
-            gpsData->update(pos, azm);
+            gpsData.update(pos, azm);
         }
     }
+}
+
+void GPSConnection::start()
+{
+    this->server = std::thread(&GPSConnection::getServer, this);
+    this->localization = std::thread(&GPSConnection::getPositionData, this);
+}
+
+void GPSConnection::stop()
+{
+    this->runCarClient = false;
+    this->server.join();
+    this->localization.join();
 }

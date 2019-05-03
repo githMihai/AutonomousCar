@@ -50,43 +50,43 @@ Path::Path(const std::string startingNode, const std::string destiantionNode)
 
 void Path::addNode(NODE_PTR node)
 {
-    this->nodesSet[node->name()] = node;
-    this->coordMap[node->coord()].push_back(node->name());
+    // this->nodesSet[node->name()] = node;
+    // this->coordMap[node->coord()].push_back(node->name());
 }
 
 
 
 void Path::removeNode(NODE_PTR node)
 {
-    this->nodesSet.erase(node->name());
-    this->coordMap[node->coord()].erase(std::remove(
-            this->coordMap[node->coord()].begin(),
-            this->coordMap[node->coord()].end(),
-            node->name()
-        ),
-        this->coordMap[node->coord()].end()
-    );
-    if (this->coordMap[node->coord()].size() == 0)
-    {
-        this->coordMap.erase(node->coord());
-    }
+    // this->nodesSet.erase(node->name());
+    // this->coordMap[node->coord()].erase(std::remove(
+    //         this->coordMap[node->coord()].begin(),
+    //         this->coordMap[node->coord()].end(),
+    //         node->name()
+    //     ),
+    //     this->coordMap[node->coord()].end()
+    // );
+    // if (this->coordMap[node->coord()].size() == 0)
+    // {
+    //     this->coordMap.erase(node->coord());
+    // }
 }
 
 
 
 void Path::removeNode(std::string nodeName)
 {
-    NODE_PTR node = this->nodesSet[nodeName];
-    this->removeNode(node);
+    // NODE_PTR node = this->nodesSet[nodeName];
+    // this->removeNode(node);
 }
 
 
 
 void Path::removeNodes(std::complex<double> coord)
 {
-    std::vector<std::string> nodes = this->coordMap[coord];
-    this->coordMap.erase(coord);
-    for (auto const& nodeName : nodes)      { this->nodesSet.erase(nodeName); }
+    // std::vector<std::string> nodes = this->coordMap[coord];
+    // this->coordMap.erase(coord);
+    // for (auto const& nodeName : nodes)      { this->nodesSet.erase(nodeName); }
 }
 
 
@@ -120,13 +120,13 @@ void Path::aStar(NODE_PTR startNode)
         if (this->isDestination(node))
         {
             this->pathSet.push_back(node);
-            this->size_++;
+            // this->size_++;
 
             while (node->parent)
             {
                 node = node->parent;
                 this->pathSet.push_back(node);
-                this->size_++;
+                // this->size_++;
             } 
             std::reverse(this->pathSet.begin(), this->pathSet.end());
             this->makeEdges();
@@ -156,13 +156,13 @@ void Path::aStar(NODE_PTR startNode)
             bool ok = true;
             for (auto &s : explorable)
             {
-                if (s->name() == succ->name())      { ok = false; }
+                if (s->name() == succ->name())      { ok = false; break; }
             }
 
             bool found = false;
             for (auto &state : explored)
             {
-                if (state->name() == succ->name())  { found = true; }
+                if (state->name() == succ->name())  { found = true; break; }
             }
 
             if (found == false && ok)
@@ -201,19 +201,19 @@ void Path::makeEdges()
                 );
                 this->edgePath.pop_back();
                 this->edgePath.push_back(newEdge);
-                this->removeEdge(pE->from()->name(), pE->to()->name());
-                this->addEdge(newEdge);
+                // this->removeEdge(pE->from()->name(), pE->to()->name());
+                // this->addEdge(newEdge);
             }
             else
             {
                 this->edgePath.push_back(e);
-                this->addEdge(e);
+                // this->addEdge(e);
             }
         }
         else
         {
             this->edgePath.push_back(e);
-            this->addEdge(e);
+            // this->addEdge(e);
         }
     }
 }
@@ -306,4 +306,14 @@ std::complex<double> Path::pathPos(std::complex<double> coord)
 {
     EDGE_PTR e = this->currentEdge(coord);
     return e->project(coord);
+}
+
+const NodesVect Path::getNodesInPath() const
+{
+    return this->pathSet;
+}
+
+const EdgesVect Path::getEdgesInPath() const
+{
+    return this->edgePath;
 }

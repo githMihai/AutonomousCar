@@ -88,3 +88,41 @@ std::string MessageConverter::dspb(bool activate)
     this->messageBuffer << "#DSPB:" << l_value << ";;\r\n";
     return messageBuffer.str();
 }
+
+std::string MessageConverter::spln(   
+                        std::complex<double> f_A, 
+                        std::complex<double> f_B,
+                        std::complex<double> f_C,
+                        std::complex<double> f_D,
+                        double time,
+                        bool isForward
+                    )
+{
+    this->messageBuffer.str("");
+    this->messageBuffer.clear();
+    int l_value = 0;
+    if (isForward)
+    {
+        l_value = 1;
+    }
+    this->messageBuffer << "#SPLN:" 
+                        << l_value << ";" 
+                        << f_A.real() 
+                            << ";" 
+                            << f_A.imag() 
+                            << ";"
+                        << f_B.real()
+                            << ";"
+                            << f_B.imag()
+                            << ";"
+                        << f_C.real()
+                            << ";"
+                            << f_C.imag()
+                            << ";"
+                        << f_D.real()
+                            << ";"
+                            << f_D.imag()
+                            << ";"
+                        << time << ";;\r\n";
+    return messageBuffer.str();
+}

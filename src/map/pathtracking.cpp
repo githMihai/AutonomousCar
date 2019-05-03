@@ -10,53 +10,44 @@
 #include <thread>
 #include <unistd.h>
 
-PathTracking::PathTracking(std::complex<double> startingNode, std::complex<double> destinationNode)
-    // : Path(Map::getInstance()[startingNode][0], Map::getInstance()[destinationNode][0])
-{
-    // TODO: hardcoded
-    this->path = new Path(Map::getInstance()[startingNode][0], Map::getInstance()[destinationNode][0]);
-    this->g_ = std::make_shared<GPSConnection>(4, 12346);
-    this->globalPosition_ = new GPSData(4, std::complex<double>(0,0), std::complex<double>(0,0));
-    // this->pathPosition_ = new GPSData(4, std::complex<double>(0,0), std::complex<double>(0,0));
-    // std::thread run (&GPSConnection::getServer, this->g_);
-    // std::thread getPoz (&GPSConnection::getPositionData, this->g_, &this->globalPosition_);
-    this->running = true;
-    this->displ = 0.0;
-}
+#define CAR_ID 4
 
-PathTracking::PathTracking(const std::string startingNode, const std::string destinationNode)
-    // : Path(Map::getInstance().nodePointer(startingNode), Map::getInstance().nodePointer(destinationNode))
-{
-    // TODO: hardcoded
-    this->path = new Path(Map::getInstance().nodePointer(startingNode), Map::getInstance().nodePointer(destinationNode));
-    this->g_ = std::make_shared<GPSConnection>(4, 12346);
-    this->globalPosition_ = new GPSData(4, std::complex<double>(0,0), std::complex<double>(0,0));
-    // this->pathPosition_ = new GPSData(4, std::complex<double>(0,0), std::complex<double>(0,0));
-    // std::thread run (&GPSConnection::getServer, this->g_);
-    // std::thread getPoz (&GPSConnection::getPositionData, this->g_, &this->globalPosition_);
-    this->running = true;
-    this->displ = 0.0;
-}
+PathTracking::PathTracking(std::complex<double> startingNode, std::complex<double> destinationNode) :
+    path(Path(Map::getInstance()[startingNode][0], Map::getInstance()[destinationNode][0])),
+    globalPosition_(GPSData(CAR_ID, std::complex<double>(0,0), std::complex<double>(0,0))),
+    pathPosition_(GPSData(CAR_ID, std::complex<double>(0,0), std::complex<double>(0,0))),
+    running(true),
+    displ_(0.0)  {}
 
-const GPSData& PathTracking::globalPosition() const     { return *this->globalPosition_; }
-const GPSData& PathTracking::pathPosition() const       { return this->pathPosition_; }
+PathTracking::PathTracking(const std::string startingNode, const std::string destinationNode) :
+    path(Path(Map::getInstance().nodePointer(startingNode), Map::getInstance().nodePointer(destinationNode))),
+    globalPosition_(GPSData(CAR_ID, std::complex<double>(0,0), std::complex<double>(0,0))),
+    pathPosition_(GPSData(CAR_ID, std::complex<double>(0,0), std::complex<double>(0,0))),
+    running(true),
+    displ_(0.0)  {}
 
-void PathTracking::update_thread()
-{
-    while (this->running)
-    {
-        this->pathPosition_.update(this->path->pathPos(globalPosition_->getPosition()), this->globalPosition_->getOrientation());
-        // this->displ = this->path->displacement(this->globalPosition_->getPosition());
-        std::cout << "global: " << *this->globalPosition_ << std::endl;
-        std::cout << "path: " << this->pathPosition_ << std::endl;
-        std::cout << "displ: " << this->displ << std::endl;
-        sleep(1);
-    }
-    // this->pathPosition_ = this->closest
-}
+// PathTracking::PathTracking(const PathTracking& pathTracking)
+// {
+//     this->globalPosition_ = pathTracking.globalPosition_;
+//     this->pathPosition_ = pathTracking.pathPosition_;
+//     this->running = pathTracking.running;
+//     this->displ_ = pathTracking.displ_;
+//     this->path = pathTracking.path;
+// }
 
 void PathTracking::run()
 {
-    std::thread* run = new std::thread(&GPSConnection::getServer, this->g_);
-    std::thread* getPoz = new std::thread(&GPSConnection::getPositionData, this->g_, this->globalPosition_);
+
 }
+
+void PathTracking::update(Subject* gps)
+{
+    this->globalPosition_ = ((GPSConnection*)gps)->position;
+    this->pathPosition_.update(this->path.pathPos(this->globalPosition_.getPosition()), this->path.pathPos(this->globalPosition_.getOrientation()));
+    this->displ_ = this->path.displacement(this->globalPosition_.getPosition());
+    std::cout << this->pathPosition_ << " displ: " << this->displ_ << std::endl;
+} 
+
+GPSData PathTracking::globalPosition()      { return this->globalPosition_; }
+GPSData PathTracking::pathPosition()        { return this->pathPosition_; }
+double PathTracking::displacement()         { return this->displ_; }

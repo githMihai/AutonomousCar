@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <complex>
 
 /*!
  * \brief The MessageConverter class, it contains functions which generate the message in the correct form.
@@ -77,6 +78,14 @@ public:
      * \return the formatted message
      */
     std::string dspb(bool activate);
+
+    std::string spln(   std::complex<double> f_A, 
+                        std::complex<double> f_B,
+                        std::complex<double> f_C,
+                        std::complex<double> f_D,
+                        double time,
+                        bool isForward
+                    );
 private:
     std::ostringstream messageBuffer;
 };

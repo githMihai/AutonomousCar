@@ -116,7 +116,23 @@ bool SerialHandler::sendEncoderActivation(bool activate)
     {
         return false;
     }
-    this->send(message);
+    return this->send(message);
+}
+
+bool SerialHandler::sendBezierCurve(   std::complex<double> f_A, 
+                            std::complex<double> f_B,
+                            std::complex<double> f_C,
+                            std::complex<double> f_D,
+                            double time,
+                            bool isForward
+                        )
+{
+    std::string message = this->messageConverter.spln(f_A, f_B, f_C, f_D, time, isForward);
+    if (message.empty())
+    {
+        return false;
+    }
+    return this->send(message);
 }
 
 void SerialHandler::close()
@@ -179,7 +195,7 @@ void SerialHandler::deleteWaiter(const std::string key, FnPtr callbackFunction)
     {
         for (int i = 0; i < it->second.size(); i++)
         {
-            if (it->second[i] == callbackFunction)
+            if (&it->second[i] == &callbackFunction)
             {
                 it->second.erase(it->second.begin() + i);
                 if (it->second.size() == 0)
