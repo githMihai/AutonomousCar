@@ -78,9 +78,9 @@ public:
      * \return std::string 
      */
     std::string getName();
-    
+
 private:
-    void timerHandler();
+    // void timerHandler();
     int id;
     int interval;
     std::string name;

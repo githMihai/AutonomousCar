@@ -27,7 +27,6 @@ public:
             o->update(this);
         }
     }
-
 private:
     std::set<IObserver*> observers;
 

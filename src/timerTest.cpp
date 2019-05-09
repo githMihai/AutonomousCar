@@ -1,4 +1,4 @@
-#if 1
+#if 0
 
 #include <iostream>
 #include <pthread.h>
@@ -71,7 +71,7 @@ Image img("/home/mihai/Workspace/BOSCH_2019/Dataset/16_apr/output_1555404694.953
 int main(int argc, char** argv)
 {
     // auto callback = std::bind(&Image::nextFrame, img);
-    Timer t("t", 50000, std::bind(&Image::nextFrame, img, (void*)(NULL)));
+    Timer t("t", 50000, std::bind(&Image::nextFrame, &img, (void*)(NULL)));
     t.start();
 
     sleep(20);

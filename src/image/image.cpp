@@ -2,6 +2,7 @@
 #include "image.h"
 #endif // IMAGE_H
 
+// #include <QtCore>
 #include <exception>
 
 Image::Image(int width, int height, double exposure, int mode) :
@@ -13,13 +14,14 @@ Image::Image(int width, int height, double exposure, int mode) :
     this->cap.set(cv::CAP_PROP_EXPOSURE, exposure);
 }
 
-Image::Image(std::string path, int width, int height, int mode) :
-    width_(width), height_(height), mode_(mode),
-    cap(cv::VideoCapture(path)), frameNo_(0), updateTime(std::time(nullptr))
+Image::Image(std::string path_, int width, int height, int mode) :
+    width_(width), height_(height), mode_(mode), path(path_),
+    cap(cv::VideoCapture(path_)), frameNo_(0), updateTime(std::time(nullptr))
 {
-    std::cout << path << std::endl;
+    std::cout << path_ << std::endl;
     this->cap.set(cv::CAP_PROP_FRAME_WIDTH, width);
     this->cap.set(cv::CAP_PROP_FRAME_HEIGHT, height);
+    // cv::namedWindow("image");
     // cv::startWindowThread();
 }
 
@@ -71,15 +73,37 @@ void Image::read(cv::Mat& frame)
     else                        { throw std::system_error(-1, std::generic_category(), "VideoCapture not opened."); }
 }
 
-void Image::nextFrame(void*)
+void* Image::nextFrame(void*)
 {
     if (this->cap.isOpened())   
     { 
         this->cap.read(this->frame_); 
         // cv::imshow("image", this->frame_); 
+        // cv::waitKey();
+        // QThread::msleep(40);
         this->notifyObservers();
     }
     else                        { throw std::system_error(-1, std::generic_category(), "VideoCapture not opened."); }
+}
+
+cv::Mat Image::getROI(const int& x, const int& y, const int& roiWidth, const int& roiHeight)
+{
+    if ((x >= 0 && x <= this->width_) &&
+        (y >= 0 && y <= this->height_) &&
+        (roiWidth > 0 && roiHeight > 0) &&
+        (x + roiWidth <= this->width_) &&
+        (y + roiHeight <= this->height_))
+    {
+        cv::Rect roi(x, y, roiWidth, roiHeight);
+        return this->frame_(roi);
+    }
+    else
+    {
+        std::cout << "x: " << x << " y: " << y << " roiWidth: " << roiWidth << " width: " << width_ << 
+        " roiHeight: " << roiHeight <<  " height: " << height_ << " x + roiWidth: " << x + roiWidth << " y + roiHeight: " << y + roiHeight << std::endl;
+        throw std::system_error(-1, std::generic_category(), "ROI out of bound.");
+    }
+    
 }
 
 void Image::close()
@@ -93,3 +117,4 @@ double Image::exposure()    { return this->exposure_; }
 int Image::mode()           { return this->mode_; }
 int Image::frameNo()        { return this->frameNo_; }
 cv::Mat& Image::frame()     { return this->frame_; }
+std::string Image::getPath(){ return this->path; }

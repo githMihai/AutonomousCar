@@ -123,11 +123,24 @@ public:
     void read(cv::Mat& frame);
 
     /*!
+     * \name getROI
+     * \brief Returns current frame cropped to the specified Region of interest.
+     * \param x 
+     * \param y 
+     * \param roiWidth 
+     * \param roiHeight 
+     * \return cv::Mat& 
+     */
+    cv::Mat getROI(const int& x, const int& y, const int& roiWidth, const int& roiHeight);
+
+    /*!
      * \name nextFrame
      * \brief Get next frame
      * \throws
      */
-    void nextFrame(void*);
+    void* nextFrame(void*);
+
+    std::string getPath();
 
     /*!
      * \name close
@@ -144,6 +157,7 @@ private:
     int mode_;
     int frameNo_;
     cv::Mat frame_;
+    std::string path;
 };
 
 // #endif // IMREAD_COLOR
