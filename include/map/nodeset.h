@@ -5,6 +5,10 @@
 #include "node.h"
 #endif
 
+#ifndef MAXFLOAT
+#define MAXFLOAT 3.40282347e+38F
+#endif // MAXFLOAT
+
 template<typename T> struct less {};
     template <typename T>
     struct less<std::complex<T> >
