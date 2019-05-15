@@ -61,6 +61,10 @@ public:
      */
     double displacement();
 
+    std::complex<double> nextNode();
+
+    int nextNodes(const int nodesNo, std::vector<std::complex<double> >& nodes); 
+
     void update(Subject* subject) override;
 
     void run();

@@ -1,16 +1,16 @@
 #if 0
 
-#include "caffenetwork.h"
+#include "movidiusnetwork.h"
 #include "timer.h"
 #include "image.h"
 
 int main(int argc, char **argv)
 {
-    CaffeNetwork caffe("resources/caffemodel/model.prototxt", "/home/mihai/Workspace/BOSCH_2019/Dataset/video_process/snap_a/CAR_iter_4000.caffemodel");
+    MovidiusNet net("/home/mihai/Workspace/BOSCH_2019/Dataset/video_process/snap_norm/graph");
     Image img("/home/mihai/Workspace/BOSCH_2019/Dataset/16_apr/output_1555405136.542821.avi");
     Timer t("t", 50000, std::bind(&Image::nextFrame, &img, (void*)(NULL)));
     t.start();
-    img.attachObserver(&caffe);
+    img.attachObserver(&net);
     sleep(60);
     t.stop();
     img.close();

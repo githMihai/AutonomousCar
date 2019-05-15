@@ -14,17 +14,21 @@
 
 PathTracking::PathTracking(std::complex<double> startingNode, std::complex<double> destinationNode) :
     path(Path(Map::getInstance()[startingNode][0], Map::getInstance()[destinationNode][0])),
-    globalPosition_(GPSData(CAR_ID, std::complex<double>(0,0), std::complex<double>(0,0))),
-    pathPosition_(GPSData(CAR_ID, std::complex<double>(0,0), std::complex<double>(0,0))),
     running(true),
-    displ_(0.0)  {}
+    displ_(0.0)  
+    {
+        this->globalPosition_ = GPSData(CAR_ID, this->path.getNodesInPath()[0]->coord(), std::complex<double>(0,0));
+        this->pathPosition_.update(this->path.pathPos(this->globalPosition_.getPosition()), this->path.pathPos(this->globalPosition_.getOrientation()));
+    }
 
 PathTracking::PathTracking(const std::string startingNode, const std::string destinationNode) :
     path(Path(Map::getInstance().nodePointer(startingNode), Map::getInstance().nodePointer(destinationNode))),
-    globalPosition_(GPSData(CAR_ID, std::complex<double>(0,0), std::complex<double>(0,0))),
-    pathPosition_(GPSData(CAR_ID, std::complex<double>(0,0), std::complex<double>(0,0))),
     running(true),
-    displ_(0.0)  {}
+    displ_(0.0)  
+    {
+        this->globalPosition_ = GPSData(CAR_ID, this->path.getNodesInPath()[0]->coord(), std::complex<double>(0,0));
+        this->pathPosition_.update(this->path.pathPos(this->globalPosition_.getPosition()), this->path.pathPos(this->globalPosition_.getOrientation()));
+    }
 
 // PathTracking::PathTracking(const PathTracking& pathTracking)
 // {
@@ -38,6 +42,36 @@ PathTracking::PathTracking(const std::string startingNode, const std::string des
 void PathTracking::run()
 {
 
+}
+
+std::complex<double> PathTracking::nextNode()
+{
+    return this->path.currentEdge(this->globalPosition_.getPosition())->to()->coord();
+}
+
+int PathTracking::nextNodes(const int nodesNo, std::vector<std::complex<double> >& nodes)
+{
+    EDGE_PTR e = path.currentEdge(this->globalPosition_.getPosition());
+    NODE_PTR n = e->to();
+    nodes.push_back(n->coord());
+    int index;
+    NodesVect vect = this->path.getNodesInPath();
+    for (index = 0; index < vect.size(); index++)
+    {
+        if (vect[index]->coord() == n->coord())
+        {
+            break;
+        }
+    }
+    for (int i = 1; i < nodesNo; i++)
+    {
+        if (index + i >= vect.size())
+        {
+            return i;
+        }
+        nodes.push_back(vect[index + i]->coord());
+    }
+    return nodesNo;
 }
 
 void PathTracking::update(Subject* gps)

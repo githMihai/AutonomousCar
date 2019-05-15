@@ -40,16 +40,37 @@ CaffeNetwork::CaffeNetwork(const CaffeNetwork& caffe_)
 
 double CaffeNetwork::infer()
 {
-    caffe::Blob<float>* input_layer = net->input_blobs()[0];
-    input_layer->Reshape(1, num_channels, input_geometry.height, input_geometry.width);
-    net->Reshape();
-
-    std::vector<cv::Mat> input_channels;
-    WrapInputLayer(&input_channels);
-
-    Preprocess(this->image, &input_channels);
-
     std::chrono::high_resolution_clock::time_point begin = std::chrono::high_resolution_clock::now();
+    caffe::Blob<float>* input_layer = net->input_blobs()[0];
+    // input_layer->Reshape(1, num_channels, input_geometry.height, input_geometry.width);
+    // net->Reshape();
+
+    // std::vector<cv::Mat> input_channels;
+    // WrapInputLayer(&input_channels);
+
+    // Preprocess(this->image, &input_channels);
+
+    caffe::BlobProto blob_proto;
+    blob_proto.set_channels(3);
+    blob_proto.set_height(this->image.rows);
+    blob_proto.set_width(this->image.cols);
+    blob_proto.clear_data();
+    cv::Mat m(this->image.rows, this->image.cols, CV_32FC3);
+    this->image.convertTo(m, CV_32FC3, 1.0/255.0);
+    for (int c = 0; c < 3; ++c) 
+    {
+        for (int h = 0; h < this->image.rows; ++h) 
+        {
+            for (int w = 0; w < this->image.cols; ++w) 
+            {
+                blob_proto.add_data(m.at<cv::Vec3f>(h, w)[c]);
+            }
+        }
+    }
+    blob_proto.set_num(1);
+    input_layer->FromProto(blob_proto);
+
+    // std::chrono::high_resolution_clock::time_point begin = std::chrono::high_resolution_clock::now();
     this->net->Forward();
 
     caffe::Blob<float>* output_layer = this->net->output_blobs()[0];
@@ -117,7 +138,7 @@ void CaffeNetwork::update(Subject* imageObj)
     // this->image = ((Image*)imageObj)->frame();
     this->image = ((Image*)imageObj)->getROI(0, 210, 640, 256);
     cv::resize(this->image, this->image, cv::Size(120, 48));
-    // cv::imshow("image", this->image);
-    // cv::waitKey();
+    cv::imshow("image", this->image);
+    cv::waitKey();
     std::cout << "result: " << 23.0*(2.0*this->infer()-1.0) << std::endl;
 }

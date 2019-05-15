@@ -38,6 +38,7 @@ set(SOURCE_FILES
     ./src/image/image.cpp
     ./src/timer/timer.cpp
     ./src/lanedetection/neuralnetwork/caffenetwork.cpp
+    ./src/lanedetection/neuralnetwork/movidiusnetwork.cpp
 
     ./src/testPoint.cpp
     ./src/testLine.cpp
@@ -48,6 +49,8 @@ set(SOURCE_FILES
     ./src/imageTest.cpp
     ./src/timerTest.cpp
     ./src/cnnTest.cpp
+    ./src/nodesTest.cpp
+    ./src/movidiusTest.cpp
 
     ./include/serialhandler/connexc.h
     # ./lib/serial/src/serial.cc
@@ -70,6 +73,7 @@ include_directories(
     ./src
     ./lib/serial/include
     /usr/local/cuda-10.1/include
+    /usr/local/include/mvnc2
     # /usr/include/caffe
     ${JSONCPPPATH}/include
     ${OpenCV_INCLUDE_DIRS}
@@ -126,6 +130,7 @@ target_link_libraries( ${PROJECT_NAME} ${JSONCPP_LIBRARIES} )
 target_link_libraries( ${PROJECT_NAME} serial )
 target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} )
 target_link_libraries( ${PROJECT_NAME} stdc++fs )
+target_link_libraries( ${PROJECT_NAME} mvnc )
 # target_link_libraries( ${PROJECT_NAME} ${Caffe_LIBS} )
 # target_link_libraries( ${PROJECT_NAME} serial )
 # ===================================
