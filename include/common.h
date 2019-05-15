@@ -1,3 +1,6 @@
+#ifndef COMMON_H
+#define COMMON_H
+
 // #include <filesystem>
 #include <string>
 //#include <opencv2/dnn.hpp>
@@ -8,7 +11,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/core.hpp>
-#include <opencv2/aruco.hpp>
+// #include <opencv2/aruco.hpp>
 #include <fstream>
 #include <math.h>
 #include  <cmath>
@@ -21,3 +24,4 @@
 #define NEG_INFINITY -1e30
 
 
+#endif // COMMON_H

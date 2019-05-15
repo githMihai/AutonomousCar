@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include "observer.h"
 
 using namespace std;
 // namespace fs = std::filesystem;
@@ -56,7 +57,7 @@ typedef struct {
 
 
 
-class TrafficSignRecognition
+class TrafficSignRecognition : public IObserver
 {
 private:
 	
@@ -68,7 +69,7 @@ private:
 	int red_hue_color_threshold = 0.2;
 	int blue_hue_color_threshold = 0.4;
 	int write_video = false;
-	int show_image_result = true;
+	int show_image_result = false;
 	//int xROIOffset = 360;
 	//int yROIOffset = 10;
 	//int ROIWidth = 280;
@@ -92,12 +93,12 @@ private:
 	HOGDescriptor hog;
 	Rect rect = bigRoi.rect;
 
-
+	Mat image;
 
 
 	void loadAutoTrainedSVM() {
 
-		svm = SVM::load("svmAutoTrained");
+		svm = SVM::load("../resources/svmAutoTrained");	// TODO path
 	}
 
 	void getSlidingWindowsROIs(vector<Rect> &imageROIs, vector<Rect> &imageROIsInBigROI, Rect &bigRoi) {
@@ -280,6 +281,10 @@ public:
 
 	void trafficSignInImage(Mat image, bool &parkingSign, bool &stopSign);
 
+	void trafficSignInImage(bool &parkingSign, bool &stopSign);
+
 	~TrafficSignRecognition();
+
+	void update(Subject* subject) override;
 };
 

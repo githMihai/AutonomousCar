@@ -69,6 +69,9 @@ public:
 
     void run();
 
+    // TODO: temporary
+    void update(double x, double y);
+
 private:
     Path path;
     GPSData globalPosition_;

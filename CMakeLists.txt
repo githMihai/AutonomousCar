@@ -40,18 +40,23 @@ set(SOURCE_FILES
     ./src/lanedetection/neuralnetwork/caffenetwork.cpp
     ./src/lanedetection/neuralnetwork/movidiusnetwork.cpp
     ./src/trafficsign/TrafficSignRecognition.cpp
+    #./src/drivecomands/VectorAngle.cpp
 
     ./src/testPoint.cpp
     ./src/testLine.cpp
     ./src/imagecoordTest.cpp
     ./src/mapreprTest.cpp
     ./src/moveTest.cpp
+    ./src/moveTest2.cpp
     ./src/gpsTest.cpp
     ./src/imageTest.cpp
     ./src/timerTest.cpp
     ./src/cnnTest.cpp
     ./src/nodesTest.cpp
     ./src/movidiusTest.cpp
+    ./src/trafficSignTest.cpp
+    
+    
 
     ./include/serialhandler/connexc.h
     # ./lib/serial/src/serial.cc
@@ -73,6 +78,7 @@ include_directories(
     ./include/lanedetection
     ./include/lanedetection/neuralnetwork
     ./include/trafficsign
+    ./include/drivecomands
     ./src
     ./lib/serial/include
     /usr/local/cuda-10.1/include
@@ -134,6 +140,7 @@ target_link_libraries( ${PROJECT_NAME} serial )
 target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} )
 target_link_libraries( ${PROJECT_NAME} stdc++fs )
 target_link_libraries( ${PROJECT_NAME} mvnc )
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} RTIMULib)
 # target_link_libraries( ${PROJECT_NAME} ${Caffe_LIBS} )
 # target_link_libraries( ${PROJECT_NAME} serial )
 # ===================================

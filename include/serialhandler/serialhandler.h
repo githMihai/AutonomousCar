@@ -31,8 +31,8 @@
  */
 // typedef void (*FnPtr)(std::string);
 #ifndef FN_PTR
-// typedef void* (*FnPtr)(void*);
-typedef std::function<void(void*)> FnPtr;
+ typedef void* (*FnPtr)(void*);
+//typedef std::function<void(void*)> FnPtr;
 #endif // FN_PTR
 typedef std::vector<FnPtr> CallbackEvent;
 

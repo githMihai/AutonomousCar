@@ -1,4 +1,7 @@
 #include "TrafficSignRecognition.h"
+#include "image.h"
+
+#include <chrono>
 
 VideoWriter videoResult("result1.avi", CV_FOURCC('M', 'J', 'P', 'G'), 20, Size(643, img_height), true);
 
@@ -63,7 +66,48 @@ void TrafficSignRecognition::trafficSignInImage(Mat src, bool &parkingSign,bool 
 	
 }
 
+void TrafficSignRecognition::trafficSignInImage(bool &parkingSign,bool &stopSign)
+{		
+		CapturedImage capImg;
+		capImg.src = this->image(bigRoi.rect);
+		//capImg.filePath = imagePath;
+		//capImg.roi = bigRoi.rect;
+		addHueMatToCapturedImgROI(capImg);
+
+		//drawRoisTest(capImg, imageROIs);
+		
+		addPosibleThresholdROIs(capImg, imageROIsInBigROI);
+
+		Mat testMat = Mat::zeros(capImg.possibleSigns.size(), descriptor_size, CV_32FC1);
+		createTrainHogMatrix(testMat,capImg.possibleSigns);
+
+		Mat preditionResults = Mat::zeros(capImg.possibleSigns.size(), 1, CV_32FC1);
+		svmPredict(testMat, preditionResults);
+
+		vector<Rect> overlappingRectanglesStopSign;
+		vector<Rect> overlappingRectanglesParkingSign;
+		//just stop sign
+	groupOverlappingRectangles(capImg, preditionResults, overlappingRectanglesStopSign, overlappingRectanglesParkingSign,parkingSign,stopSign);
+	
+}
+
 
 TrafficSignRecognition::~TrafficSignRecognition()
 {
+}
+
+void TrafficSignRecognition::update(Subject* imageObj)
+{
+	this->image = ((Image*)imageObj)->frame();
+	bool parking = false;
+	bool stop = false;
+
+	std::chrono::high_resolution_clock::time_point begin = std::chrono::high_resolution_clock::now();
+	this->trafficSignInImage(parking, stop);
+	std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end-begin).count() << std::endl;
+    std::cout << "Parking: " << parking << " Stop: " << stop << std::endl;
+	// imshow("image", this->image);
+	// waitKey();
 }

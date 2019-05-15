@@ -82,6 +82,13 @@ void PathTracking::update(Subject* gps)
     std::cout << this->pathPosition_ << " displ: " << this->displ_ << std::endl;
 } 
 
+void PathTracking::update(double x, double y)
+{
+    this->globalPosition_ = GPSData(0, std::complex<double>(x, y), std::complex<double>(0,0));
+    this->pathPosition_.update(this->path.pathPos(this->globalPosition_.getPosition()), this->path.pathPos(this->globalPosition_.getOrientation()));
+    this->displ_ = this->path.displacement(this->globalPosition_.getPosition());
+}
+
 GPSData PathTracking::globalPosition()      { return this->globalPosition_; }
 GPSData PathTracking::pathPosition()        { return this->pathPosition_; }
 double PathTracking::displacement()         { return this->displ_; }
