@@ -39,6 +39,7 @@ set(SOURCE_FILES
     ./src/timer/timer.cpp
     ./src/lanedetection/neuralnetwork/caffenetwork.cpp
     ./src/lanedetection/neuralnetwork/movidiusnetwork.cpp
+    ./src/trafficsign/TrafficSignRecognition.cpp
 
     ./src/testPoint.cpp
     ./src/testLine.cpp
@@ -59,6 +60,7 @@ set(SOURCE_FILES
 
 #  =============INCLUDES=============
 include_directories( 
+    ./include
     ./include/gps
     ./include/serialhandler
     ./include/socket
@@ -70,6 +72,7 @@ include_directories(
     ./include/timer
     ./include/lanedetection
     ./include/lanedetection/neuralnetwork
+    ./include/trafficsign
     ./src
     ./lib/serial/include
     /usr/local/cuda-10.1/include
