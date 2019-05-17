@@ -1,6 +1,8 @@
 #ifndef NODE_H
 #define NODE_H
 
+class Node;
+
 #define NODE_PTR std::shared_ptr<Node>
 
 // #ifndef DICTIONARY_H
@@ -15,8 +17,6 @@
 #include <string>
 #include <json/json.h>
 #include <complex>
-
-class Node;
 
 typedef std::vector<NODE_PTR> NodesVect;
 // typedef std::map<std::string, EDGE_PTR> Edges;

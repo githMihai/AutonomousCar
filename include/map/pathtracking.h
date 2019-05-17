@@ -65,6 +65,8 @@ public:
 
     int nextNodes(const int nodesNo, std::vector<std::complex<double> >& nodes); 
 
+    int nextObstaclesNodes(const std::complex<double> position, int nodesNo, std::vector<std::complex<double> >& nodes);
+
     void update(Subject* subject) override;
 
     void run();

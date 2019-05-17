@@ -74,6 +74,54 @@ int PathTracking::nextNodes(const int nodesNo, std::vector<std::complex<double> 
     return nodesNo;
 }
 
+int PathTracking::nextObstaclesNodes(const std::complex<double> position, int nodesNo, std::vector<std::complex<double> >& nodes)
+{
+    EDGE_PTR e = path.currentEdge(position);
+    NODE_PTR n = e->to();
+    std::complex<double> v = e->normal();
+    if (e->direction(e->to()->coord()+e->normal()) > 0)
+    {
+        nodes.push_back(e->to()->coord() + e->normal()*0.225);
+    }
+    else
+    {
+        nodes.push_back(e->to()->coord() + e->normal()*(-0.225));
+    }
+
+    int index;
+    NodesVect vect = this->path.getNodesInPath();
+    for (index = 0; index < vect.size(); index++)
+    {
+        if (vect[index]->coord() == n->coord())
+        {
+            break;
+        }
+    }
+    for (int i = 1; i < nodesNo; i++)
+    {
+        if (index + i >= vect.size())
+        {
+            return i;
+        }
+        if (i == nodesNo - 1)
+        {
+            nodes.push_back(vect[index + i]->coord());
+        }
+        else
+        {
+            if (e->direction(e->to()->coord()+e->normal()) > 0)
+            {
+                nodes.push_back(vect[index + i]->coord() + e->normal()*0.225);
+            }
+            else
+            {
+                nodes.push_back(vect[index + i]->coord() + e->normal()*(-0.225));
+            }
+        }
+    }
+    return nodesNo;
+}
+
 void PathTracking::update(Subject* gps)
 {
     this->globalPosition_ = ((GPSConnection*)gps)->position;

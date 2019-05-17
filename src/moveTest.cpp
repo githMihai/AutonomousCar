@@ -30,6 +30,10 @@ int main(int argc, char **argv)
 
     c = new CarControl();
 
+    c->enablePID();
+
+    c->move(1.0, 0.0);
+
     c->brake(10.0);
 
     c->close();

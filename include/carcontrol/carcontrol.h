@@ -1,6 +1,8 @@
 #ifndef CARCONTROL_H
 #define CARCONTROL_H
 
+#include <unistd.h>
+
 #ifndef SERIALHANDELR_H
 #include "serialhandler.h"
 #endif // SERIALHANDELR_H
@@ -15,8 +17,6 @@ enum active_functions
     DISTANCE_SENSORS_PUBLISHER  = 4,
     SAFETTY_STOP                = 8
 };
-
-void* ackFunction(void*);
 
 class CarControl
 {
@@ -158,6 +158,8 @@ public:
      * \return double 
      */
     double getTimeout();
+
+    void* ackFunction(void*);
 private:
     SerialHandler serialHandler;
     uint8_t flags;

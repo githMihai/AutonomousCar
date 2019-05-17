@@ -82,7 +82,9 @@ void MapRepresentation::readPosition(int  event, int  x, int  y, int  flag, Mous
         cv::Point2f point((onPath.real())*100 + 23, -((onPath.imag())*100)+518);
         // std::cout << point << std::endl;
         cv::Mat cop = param->image.clone();
-        cv::circle(cop, point, 3, cv::Vec3b(0, 255, 0), 3);
+        cv::circle(cop, cv::Point(x, y), 3, cv::Vec3b(0, 255, 255), 3);
+        cv::line(cop, point, cv::Point(x, y), cv::Vec3b(0, 255, 255), 2);
+        cv::circle(cop, point, 3, cv::Vec3b(200, 255, 50), 3);
         cv::imshow("image", cop);
     }
 }

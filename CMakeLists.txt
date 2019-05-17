@@ -39,22 +39,38 @@ set(SOURCE_FILES
     ./src/timer/timer.cpp
     ./src/lanedetection/neuralnetwork/caffenetwork.cpp
     ./src/lanedetection/neuralnetwork/movidiusnetwork.cpp
-    ./src/trafficsign/TrafficSignRecognition.cpp
+    # ./src/trafficsign/TrafficSignRecognition.cpp
     #./src/drivecomands/VectorAngle.cpp
+    ./src/statemachine/crossroadstate.cpp
+    ./src/statemachine/idlestate.cpp
+    ./src/statemachine/lanefollow.cpp
+    ./src/statemachine/overtakestate.cpp
+    ./src/statemachine/parking.cpp
+    ./src/statemachine/pathplanningstate.cpp
+    ./src/statemachine/stopsignstate.cpp
+    ./src/statemachine/state.cpp
+    ./src/statemachine/statemachine.cpp
+    ./src/imu/imu.cpp
+    ./src/imuencoderposition/imuencoderposition.cpp
+    ./src/positiondrive/positiondrive.cpp
 
-    ./src/testPoint.cpp
-    ./src/testLine.cpp
-    ./src/imagecoordTest.cpp
-    ./src/mapreprTest.cpp
-    ./src/moveTest.cpp
-    ./src/moveTest2.cpp
-    ./src/gpsTest.cpp
-    ./src/imageTest.cpp
-    ./src/timerTest.cpp
-    ./src/cnnTest.cpp
-    ./src/nodesTest.cpp
-    ./src/movidiusTest.cpp
-    ./src/trafficSignTest.cpp
+    # ./src/testPoint.cpp
+    # ./src/testLine.cpp
+    # ./src/imagecoordTest.cpp
+    # ./src/mapreprTest.cpp
+    # ./src/moveTest.cpp
+    # ./src/moveTest2.cpp
+    # ./src/gpsTest.cpp
+    # ./src/imageTest.cpp
+    # ./src/timerTest.cpp
+    # ./src/cnnTest.cpp
+    # ./src/nodesTest.cpp
+    # ./src/movidiusTest.cpp
+    # ./src/trafficSignTest.cpp
+    # ./src/stateTest.cpp
+    # ./src/IMUTest.cpp
+    # ./src/driveTest.cpp
+    ./src/cnnTest2.cpp
     
     
 
@@ -78,6 +94,10 @@ include_directories(
     ./include/lanedetection
     ./include/lanedetection/neuralnetwork
     ./include/trafficsign
+    ./include/statemachine
+    ./include/imu
+    ./include/imuencoderposition
+    ./include/positiondrive
     ./include/drivecomands
     ./src
     ./lib/serial/include

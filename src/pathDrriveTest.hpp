@@ -278,6 +278,7 @@ float angleAndDirectionOfPoints2(float fx,float fy,float tx,float ty, float cure
 
 	//quad IV 
 	if (curentAngle <= 90.0 && curentAngle >= 0) {
+		//printf("quad IV curent angle: %f x:%f \n",curentAngle,x);
 		x = fmod(curentAngle - (x), 360.0);
 		x = -x;
 		if (abs(x) > 180) {
@@ -289,25 +290,29 @@ float angleAndDirectionOfPoints2(float fx,float fy,float tx,float ty, float cure
 	}
 	//quad II
 	else if (curentAngle < -90.0) {
+		//printf("quad II curent angle: %f x:%f \n",curentAngle,x);
 		x = fmod(curentAngle - (x), 360.0);
+		//printf("quad II after mod x:%f \n",curentAngle,x);
 		x = -x;
-		if (x > 180) {
+		if (abs(x) > 180) {
 			x = x - 360;
-
-
 		}
+		//printf("quad II final x:%f \n",x);
 	}
 	//quad III
 	else if (curentAngle > 90) {
+		//printf("quad III curent angle: %f x:%f \n",curentAngle,x);
 		x = fmod(curentAngle - (x), 360.0);
-		x = -x;
-		if (x > 180) {
-			x = x + 360;
+		
+		if (abs(x) > 180) {
+			x = x - 360;
 		}
+		x = -x; // todo ivnerse sign
+		x = fmod(x, 360.0);
 	}
 	//quad I
 	else if (curentAngle < 0 && curentAngle >= -90) {
-
+		//printf("quad I curent angle: %f x:%f \n",curentAngle,x);
 		x = fmod(curentAngle - (x), 360.0);
 		x = -x;
 		if (x > 180) {
@@ -322,29 +327,90 @@ float angleAndDirectionOfPoints2(float fx,float fy,float tx,float ty, float cure
 	return x;
 
 }
-void moveCurveStartingPoint(float fx,float fy,float tx,float ty, float curentAngle){
+Point moveCurveStartingPoint(float fx,float fy,float directionOfCurve, float curentAngle, int dx = 5,int dy = 5){
+
+
+
+	int dir = 1;
+	//dx = 2*dx;
+	//dy = 2*dy;
+	if(directionOfCurve > 0){
+		dir = -1; 
+		dx = dx*2;
+		dy = dy*2;
+	}
+
 		//quad IV 
 	if (curentAngle <= 135.0 && curentAngle >= 45) {
-		fx = fx - 10;
-
+		fy = fy + (dir * dy);
+		fx = fx - (dir * dx);
+		printf("quad IV \n");
 	}
 	//quad II
-	else if (curentAngle < -90.0) {
-		
+	else if (curentAngle < -45.0 && curentAngle > -135) {
+		fy = fy - (dir * dy);
+		fx = fx + (dir * dx);
+		printf("quad II \n");
 	}
 	//quad III
-	else if (curentAngle > 90) {
-
+	else if (curentAngle > 135 || curentAngle < -135) {
+		fy = fy - (dir * dy);
+		fx = fx + (dir * dx);
+		printf("quad III \n");
 	}
 	//quad I
-	else if (curentAngle < 0 && curentAngle >= -90) {
+	else if (curentAngle < 45 && curentAngle >= -45) {
 		
-		fx = fx - 10;
-
+		fy = fy + (dir * dy);
+		fx = fx - ( dx);
+		printf("quad I \n");
 	}
 
-	return x;
+	return Point(fx,fy);
 }
+
+void moveCurveStartingPoint(Point &from,Point &to,float directionOfCurve,float curentAngle){
+	
+
+	int dir = 1;
+	//dx = 2*dx;
+	//dy = 2*dy;
+	if(directionOfCurve > 0){
+		dir = -1; 
+		//dx = dx*2;
+		//dy = dy*2;
+	}
+
+		//quad IV 
+	if (curentAngle <= 135.0 && curentAngle >= 45) {
+		from = Point(from.x ,from.y - 10);
+		to = Point(to.x + 10,to.y);
+		printf("quad IV \n");
+	}
+	// //quad II
+	// else if (curentAngle < -45.0 && curentAngle > -135) {
+	// 	fy = fy - (dir * dy);
+	// 	fx = fx + (dir * dx);
+	// 	printf("quad II \n");
+	// }
+	// //quad III
+	// else if (curentAngle > 135 || curentAngle < -135) {
+	// 	fy = fy - (dir * dy);
+	// 	fx = fx + (dir * dx);
+	// 	printf("quad III \n");
+	// }
+	//quad I
+	else if (curentAngle < 45 && curentAngle >= -45) {
+		
+		from = Point(from.x - 10,from.y);
+		to = Point(to.x,to.y + 10);
+		printf("quad I \n");
+	}
+
+	//return Point(fx,fy);
+	
+}
+
 bool pointInsideCircle(Point p, Point origin) {
 	float R = 15; //wheelbase is 26.5 cm 
 	float dx = abs(p.x - origin.x);
