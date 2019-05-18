@@ -176,9 +176,11 @@ void* Machine::switchState(void*)
             }
             case PARKING:
             {
-                if (exitParking)        { state = PATH_PLANNING; }
-                else                    { state = PARKING; }
-                break;
+                sleep(1.0);
+                // if (exitParking)        { state = PATH_PLANNING; }
+                // else                    { state = PARKING; }
+                // break;
+                state = LANE_FOLLOW;
             }
         }
         // std::cout << state << std::endl;
@@ -272,12 +274,18 @@ void* Machine::run(void*)
             // }
             case PARKING:
             {
-                if (!exitParking)
+                // if (!exitParking)
                 {
                     std::cout << "PARKING " << std::endl;
                     exitParking = false;
                     // TODO: parking
-                    
+                    carControl.brake(0.0);
+                    sleep(1.0);
+                    path = PathTracking("NOD134", "NOD0");
+                    path.addToCrossRoad(std::complex<double>(3.825, 2.475));
+                    path.addToCrossRoad(std::complex<double>(1.125, 4.725));
+                    path.addToCrossRoad(std::complex<double>(1.125, 2.475));
+                    path.addToCrossRoad(std::complex<double>(3.825, 0.225));
                     exitParking = true;
                 }
                 break;
@@ -318,15 +326,15 @@ void* Machine::run(void*)
                 std::cout << "LANE " << std::endl;
                 while (state == LANE_FOLLOW)
                 {
-                    std::cout << "\t\t\t\tDIST_CROSS: " << path.distanceToCross() << std::endl;
-                    std::cout << "\t\t\tLANE_DIST: " << path.displacement() << std::endl;
-                    float dir = -1 ? (path.displacement() < 0) : 1;
-                    if (abs(path.displacement()) > 1.5)
-                    {
-                        carControl.move(0.2, dir*23.0);
-                        std::cout << "LANE with margin: " << dir*23.0 << std::endl;
-                    }
-                    else
+                    // std::cout << "\t\t\t\tDIST_CROSS: " << path.distanceToCross() << std::endl;
+                    // std::cout << "\t\t\tLANE_DIST: " << path.displacement() << std::endl;
+                    // float dir = -1 ? (path.displacement() < 0) : 1;
+                    // if (abs(path.displacement()) > 0.10)
+                    // {
+                    //     carControl.move(0.2, dir*23.0);
+                    //     std::cout << "LANE with margin: " << dir*23.0 << std::endl;
+                    // }
+                    // else
                     {
                         std::cout << "LANE: " << 23.0*(2.0*net.infer()-1.0) << std::endl;
                         carControl.move(0.2, 23.0*(2.0*net.infer()-1.0));
