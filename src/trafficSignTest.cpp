@@ -12,6 +12,12 @@ int main(int argc, char **argv)
     TrafficSignRecognition sign;
     Timer t("t", 50000, std::bind(&Image::nextFrame, &img, (void*)(NULL)));
     t.start();
+
+    bool stop = false;
+    bool parking = false;
+
+    Timer t1("sign", 500000, std::bind(&TrafficSignRecognition::trafficSignInImageA, &sign, (void*)(NULL)));
+
     img.attachObserver(&sign);
     sleep(60);
     t.stop();

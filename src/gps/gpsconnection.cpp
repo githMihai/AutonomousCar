@@ -59,6 +59,7 @@ GPSConnection::GPSConnection(int carID, uint16_t negotiationPort)
     this->idSentFlag = false;
     this->runCarClient = true;
     this->serverIP = "";
+    this->className_ = "GPSConnection";
 }
 
 GPSConnection& GPSConnection::operator= (const GPSConnection &gps)
@@ -83,6 +84,7 @@ GPSConnection& GPSConnection::operator= (const GPSConnection &gps)
     this->idSentFlag = gps.idSentFlag;
     this->runCarClient = gps.runCarClient;
     this->serverIP = gps.serverIP;
+    this->className_ = gps.className();
     return *this;
 }
 
@@ -299,7 +301,7 @@ void GPSConnection::msg2data(std::string msg, GPSData& gpsData)
     if (std::regex_search(msg, sm, r))
     {
         int id = std::stoi(sm[ID_IDX]);
-        std::complex<double> pos(std::stod(sm[POS_REAL_IDX]), std::stod(sm[POS_IMAG_IDX]));
+        std::complex<double> pos(std::stod(sm[POS_REAL_IDX])/10.0, std::stod(sm[POS_IMAG_IDX])/10.0);
         std::complex<double> azm(std::stod(sm[AZM_REAL_IDX]), std::stod(sm[AZM_IMAG_IDX]));
         if (gpsData.getId() == id)
         {

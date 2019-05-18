@@ -12,7 +12,6 @@ MessageConverter::MessageConverter()
 std::string MessageConverter::mctl(double velocity, double angle)
 {
     this->messageBuffer.str("");
-    std::cout << "ok" << std::endl;
     this->messageBuffer.clear();
     this->messageBuffer << "#MCTL:" << velocity << ";" << angle << ";;\r\n";
     return messageBuffer.str();

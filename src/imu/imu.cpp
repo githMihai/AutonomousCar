@@ -1,5 +1,7 @@
 #include "imu.h"
 
+#define PI 3.14159265
+
 IMU::IMU()
 {
 
@@ -46,6 +48,8 @@ IMU::IMU(const std::string configPath, const std::string option)
     } 
     
     // free(settings);
+    this->className_ = "IMU";
+    this->start();
 }
 
 IMU::~IMU() {}
@@ -62,14 +66,19 @@ void IMU::setAngleToZero()
 void IMU::readIMU()
 {
     while(this->running){
-        usleep(imu->IMUGetPollInterval() * 1000);
+        usleep(imu->IMUGetPollInterval() * 100);
         
         imu->IMURead();
         RTIMU_DATA imuData = imu->getIMUData();
         float theta = (float)imuData.fusionPose.z();
-
+         theta = theta - initial_angle_yaw;
+            if(theta < -PI){
+                theta = 2*PI - abs(theta);                
+            }else if(theta > PI){
+                theta = -(2*PI - abs(theta));
+            }
         pthread_mutex_lock(&lock_yaw);
-            this->curent_yaw_rad = theta - initial_angle_yaw;
+            this->curent_yaw_rad = fmod(theta,PI);
         pthread_mutex_unlock(&lock_yaw); 
         this->notifyObservers();
     }

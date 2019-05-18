@@ -34,6 +34,17 @@ PositionDrive::PositionDrive(const CarControl* c_, const PathTracking* path_)
     }
 }
 
+// PositionDrive::PoistionDrive(const PositionDrive& positionDrive)
+// {
+//     this->c = positionDrive.c;
+//     this->path = positionDrive.path;
+//     this->angle = positionDrive.angle;
+//     this->lock_angle = positionDrive.lock_angle;  
+//     this->x = positionDrive.x;
+//     this->y = positionDrive.y  
+//     this->curent_yaw_rad = positionDrive.curent_yaw_rad;
+// }
+
 PositionDrive::~PositionDrive() {}
 
 void PositionDrive::drive(std::vector<Point> &dstPoints)
@@ -44,7 +55,7 @@ void PositionDrive::drive(std::vector<Point> &dstPoints)
 
 	while (dstPoints.size() > 2)
 	{       
-
+        // pthread_mutex_t lock_angle;
         Point dstPoint = dstPoints.at(0);
 		printf("dstPoint x:%d y:%d \n",dstPoint.x,dstPoint.y);
 		bool pointReached = pointInsideCircle(Point( curentX , curentY), dstPoints.at(0));
@@ -54,6 +65,7 @@ void PositionDrive::drive(std::vector<Point> &dstPoints)
         bool noPointEliminated = true;
         //bool pointReached = false;
         while (!pointReached) {
+            std::cout << "while" << std::endl;
             curentX = x, curentY = y;
             Point pcurent = Point(curentX, curentY);
             
@@ -86,7 +98,7 @@ void PositionDrive::drive(std::vector<Point> &dstPoints)
             float distanceToPoint, angleToPoint;
             angleAndDirectionOfPoints2(curentX,curentY,dstPoint.x,dstPoint.y,  (curent_yaw_rad*180/PI), angleToPoint,distanceToPoint);
             //printf("Local: x:%d y:%d distanceToPointDst:%f , angleToPointDst: %f;\n",pcurent.x ,pcurent.y, distanceToPoint, angleToPoint);
-            if (angleToPoint > 16.0) {
+            if (angleToPoint > 20.0) {
                 try
                 {
                     // c->move(0.2,23.0);
@@ -100,7 +112,7 @@ void PositionDrive::drive(std::vector<Point> &dstPoints)
                 }
                 //printf(" c->move(0.2,%.2f);\n",23.0);
             }
-            else if (angleToPoint < -16.0  ) {
+            else if (angleToPoint < -20.0  ) {
                 try
                 {
                     // c->move(0.2,-23.0);
@@ -137,6 +149,9 @@ void PositionDrive::drive(std::vector<Point> &dstPoints)
 
 void PositionDrive::drivePoints(const int pointsNo)
 {
+    // pthread_mutex_lock(&lock_angle);
+        done = false;;
+    // pthread_mutex_unlock(&lock_angle);
     std::vector<Point> points;
     std::vector<std::complex<double>> pointsVector;
     this->path->nextNodes(pointsNo, pointsVector);
@@ -144,7 +159,7 @@ void PositionDrive::drivePoints(const int pointsNo)
     {
         std::complex<double> point = pointsVector[i];
         float distanceToPointP01,distanceToPointP11, angleToPointP11, innerAngleP11;
-        Point p = Point(point.real()*100 + 22.5, (double)516.5 - (double)(point.imag()) *100);
+        Point p = Point(point.real()*100 + 27, (double)521.5 - (double)(point.imag()) *100);
         // if(i < pointsVector.size() - 2){
         //     Point p1 = Point(pointsVector.at(i+1).real()*100 + 22.5, (double)516.5 - (double)(pointsVector.at(i+1).imag()) *100);
         //     Point p2 = Point(pointsVector.at(i+2).real()*100 + 22.5, (double)516.5 - (double)(pointsVector.at(i+2).imag()) *100);
@@ -156,8 +171,47 @@ void PositionDrive::drivePoints(const int pointsNo)
         // }
         points.push_back(p);
         // originalPoints.push_back(p);
-        this->drive(points);
     }
+    this->drive(points);
+    std::cout << "drive" << std::endl;
+
+    std::cout << "done" << std::endl;
+    // pthread_mutex_lock(&lock_angle);
+        done = true;
+    // pthread_mutex_unlock(&lock_angle);
+    std::cout << "Try to exit." << std::endl;
+    // exit(1);
+    // std::cout << "exit_sys" << std::endl;
+}
+
+void PositionDrive::drivePointsObs(std::vector<std::complex<double>> &pointsVector)
+{
+    pthread_mutex_lock(&lock_angle);
+        done = false;;
+    pthread_mutex_unlock(&lock_angle);
+    std::vector<Point> points;
+    for (int i = 0; i < pointsVector.size() ; i++)
+    {
+        std::complex<double> point = pointsVector[i];
+        float distanceToPointP01,distanceToPointP11, angleToPointP11, innerAngleP11;
+        Point p = Point(point.real()*100 + 27, (double)521.5 - (double)(point.imag()) *100);
+        // if(i < pointsVector.size() - 2){
+        //     Point p1 = Point(pointsVector.at(i+1).real()*100 + 22.5, (double)516.5 - (double)(pointsVector.at(i+1).imag()) *100);
+        //     Point p2 = Point(pointsVector.at(i+2).real()*100 + 22.5, (double)516.5 - (double)(pointsVector.at(i+2).imag()) *100);
+        //     distanceAnglePointToVector(p.x,p.y,p1, p2, distanceToPointP01, distanceToPointP11 , angleToPointP11, innerAngleP11);
+        //     if(innerAngleP11 > 30.0){
+        //         moveCurveStartingPoint(p,p2,angleToPointP11);
+        //         printf("Moved dstPoint x:%d y:%d \n",p.x,p.y);
+        //     }
+        // }
+        points.push_back(p);
+        // originalPoints.push_back(p);
+    }
+    this->drive(points);
+
+    pthread_mutex_lock(&lock_angle);
+        done = true;
+    pthread_mutex_unlock(&lock_angle);
 }
 
 void PositionDrive::update(Subject* positionObj)

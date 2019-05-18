@@ -39,8 +39,8 @@ set(SOURCE_FILES
     ./src/timer/timer.cpp
     ./src/lanedetection/neuralnetwork/caffenetwork.cpp
     ./src/lanedetection/neuralnetwork/movidiusnetwork.cpp
-    # ./src/trafficsign/TrafficSignRecognition.cpp
-    #./src/drivecomands/VectorAngle.cpp
+    ./src/trafficsign/TrafficSignRecognition.cpp
+    # ./src/drivecomands/VectorAngle.cpp
     ./src/statemachine/crossroadstate.cpp
     ./src/statemachine/idlestate.cpp
     ./src/statemachine/lanefollow.cpp
@@ -53,6 +53,7 @@ set(SOURCE_FILES
     ./src/imu/imu.cpp
     ./src/imuencoderposition/imuencoderposition.cpp
     ./src/positiondrive/positiondrive.cpp
+    ./src/obstacledetection/ObstacleDetection.cpp
 
     # ./src/testPoint.cpp
     # ./src/testLine.cpp
@@ -70,7 +71,9 @@ set(SOURCE_FILES
     # ./src/stateTest.cpp
     # ./src/IMUTest.cpp
     # ./src/driveTest.cpp
-    ./src/cnnTest2.cpp
+    # ./src/cnnTest2.cpp
+    ./src/mainState.cpp
+    # ./src/obstacleTest.cpp
     
     
 
@@ -99,6 +102,7 @@ include_directories(
     ./include/imuencoderposition
     ./include/positiondrive
     ./include/drivecomands
+    ./include/obstacledetection
     ./src
     ./lib/serial/include
     /usr/local/cuda-10.1/include

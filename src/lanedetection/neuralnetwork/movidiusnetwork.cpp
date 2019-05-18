@@ -151,9 +151,12 @@ MovidiusNet::~MovidiusNet()
 void MovidiusNet::update(Subject* imageObj)
 {
     // this->image = ((Image*)imageObj)->frame();
-    this->image = ((Image*)imageObj)->getROI(0, 210, 640, 256);
-    cv::resize(this->image, this->image, cv::Size(120, 48));
-    cv::imshow("image", this->image);
-    cv::waitKey();
-    std::cout << "result: " << 23.0*(2.0*this->infer()-1.0) << std::endl;
+    if (((Image*)imageObj)->frame().rows == 480)
+    {
+        this->image = ((Image*)imageObj)->getROI(0, 210, 640, 256);
+        cv::resize(this->image, this->image, cv::Size(120, 48));
+    }
+    // cv::imshow("image", this->image);
+    // cv::waitKey();
+    // std::cout << "result: " << 23.0*(2.0*this->infer()-1.0) << std::endl;
 }

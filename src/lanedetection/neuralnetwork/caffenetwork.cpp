@@ -40,7 +40,7 @@ CaffeNetwork::CaffeNetwork(const CaffeNetwork& caffe_)
 
 double CaffeNetwork::infer()
 {
-    std::chrono::high_resolution_clock::time_point begin = std::chrono::high_resolution_clock::now();
+    // std::chrono::high_resolution_clock::time_point begin = std::chrono::high_resolution_clock::now();
     caffe::Blob<float>* input_layer = net->input_blobs()[0];
     input_layer->Reshape(1, num_channels, input_geometry.height, input_geometry.width);
     net->Reshape();
@@ -75,9 +75,9 @@ double CaffeNetwork::infer()
     this->net->Forward();
 
     caffe::Blob<float>* output_layer = this->net->output_blobs()[0];
-    std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+    // std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
 
-    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end-begin).count() << std::endl;
+    // std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end-begin).count() << std::endl;
 
     return output_layer->cpu_data()[0];
 
@@ -138,11 +138,14 @@ void CaffeNetwork::update(Subject* imageObj)
 {
     // this->image = ((Image*)imageObj)->frame();
     // this->image = ((Image*)imageObj)->getROI(0, 210, 640, 256);
-    this->image = ((Image*)imageObj)->getROI(0, 144, 640, 256);
+    if (((Image*)imageObj)->frame().rows == 480)
+    {
+        this->image = ((Image*)imageObj)->getROI(0, 144, 640, 256);
+        cv::resize(this->image, this->image, cv::Size(80, 32));
+    }
     // cv::imshow("image", this->image);
     // cv::waitKey();
     // cv::resize(this->image, this->image, cv::Size(120, 48));
-    cv::resize(this->image, this->image, cv::Size(80, 32));
     // cv::imshow("image", this->image);
     // cv::waitKey();
     // std::cout << "result: " << 23.0*(2.0*this->infer()-1.0) << std::endl;

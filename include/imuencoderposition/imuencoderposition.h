@@ -11,7 +11,7 @@
 #include "imu.h"
 
 #ifndef ROT_PER_METER
-#define ROT_PER_METER 148.00   // = 1 cm ? ...1 pixel = 1.28
+#define ROT_PER_METER 156.2   // should be 148
 #endif // ROT_PER_METER
 
 class IMUEncoderPosition : public Subject, public IObserver
@@ -37,6 +37,7 @@ private:
     float curent_yaw_rad;
     pthread_mutex_t lock_XY;
     std::vector<cv::Point> points;
+    bool initial;
 };
 
 #endif // IMUENCODERPOSITION_H

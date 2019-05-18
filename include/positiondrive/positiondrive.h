@@ -18,14 +18,16 @@ public:
     PositionDrive();
     PositionDrive(const CarControl* c, const PathTracking* path_);
     ~PositionDrive();
-    PositionDrive(const PositionDrive& obj);
+    // PositionDrive(const PositionDrive& obj);
     PositionDrive& operator=(const PositionDrive& obj);
     void drive(std::vector<cv::Point> &dstPoints);
     void drivePoints(const int pointsNo);
+    void drivePointsObs(std::vector<std::complex<double>> &pointsVector);
     void update(Subject* subject) override;
     int nsleep(long miliseconds);
     float angle;
     pthread_mutex_t lock_angle;
+    bool done;
 private:
     CarControl *c;
     PathTracking* path;

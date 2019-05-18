@@ -7,7 +7,7 @@ CarControl::CarControl() : serialHandler()
 {
     this->flags = DISABLE_ALL;
     this->timeout = DEFAULT_TIMEOUT;
-    sleep(1); // TODO: verify why sleep
+    // sleep(1); // TODO: verify why sleep
 }
 
 void CarControl::enable(const uint8_t flag) throw()
@@ -247,14 +247,13 @@ void CarControl::move(const double speed, const double angle) throw()
     bool sent = false;
 
     this->serialHandler.addWaiter("MCTL", std::bind(&CarControl::ackFunction, this, (void*)(NULL)));
-    std::cout << "move" << std::endl;
     sent = this->serialHandler.sendMove(speed, angle);
-    std::cout << "move1" << std::endl;
     if (sent)
     {
         if (this->serialHandler.waitWaiter("MCTL", this->timeout))
         {
-            std::cout << "MCTL received" << std::endl;
+            // TODO: Logger
+            // std::cout << "MCTL received" << std::endl;
         }
         else
         {

@@ -98,7 +98,7 @@ private:
 
 	void loadAutoTrainedSVM() {
 
-		svm = SVM::load("../resources/svmAutoTrained");	// TODO path
+		svm = SVM::load("resources/svmAutoTrained");	// TODO path
 	}
 
 	void getSlidingWindowsROIs(vector<Rect> &imageROIs, vector<Rect> &imageROIsInBigROI, Rect &bigRoi) {
@@ -257,8 +257,16 @@ private:
 		if (overlappingRectanglesStopSign.size() > 0) {
 			stopSign = true;
 		}
+		else
+		{
+			stopSign = false;
+		}
 		if (overlappingRectanglesParkingSign.size() > 0) {
 			parkingSign = true;
+		}
+		else
+		{
+			parkingSign = false;
 		}
 	}
 public:
@@ -279,9 +287,12 @@ public:
 		int ROIWidth = 280,
 		int ROIHeight = 150);*/
 
+	bool parkingSignBool;
+	bool stopSignBool;
+
 	void trafficSignInImage(Mat image, bool &parkingSign, bool &stopSign);
 
-	void trafficSignInImage(bool &parkingSign, bool &stopSign);
+	void* trafficSignInImageA(void*);
 
 	~TrafficSignRecognition();
 

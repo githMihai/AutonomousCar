@@ -1,5 +1,6 @@
 #include "imuencoderposition.h"
 #include "connexc.h"
+#include "gpsconnection.h"
 
 IMUEncoderPosition::IMUEncoderPosition() {}
 
@@ -15,13 +16,16 @@ IMUEncoderPosition::IMUEncoderPosition(const CarControl* car)
     // {
     //     std::cout << e.what() << std::endl;
     // }
-    this->x = 0.0;
-    this->y = 63.0;
+
+    this->initial = true;
+    this->x = 0.0; // todo get from gps
+    this->y = 0.0; // todo get from gps
 
     this->xAnt = 30;
-    this->yAnt = 66;
+    this->yAnt = 71.6;
     this->readingCounter = 0;
 
+    this->className_ = "IMUEncoderPosition";
     if (pthread_mutex_init(&lock_XY, NULL) != 0) 
     { 
         printf("\n mutex init has failed\n"); 
@@ -38,7 +42,7 @@ void* IMUEncoderPosition::readEncoder(void* str)
     pthread_mutex_lock(&lock_XY);
         local_yaw = curent_yaw_rad;
     pthread_mutex_unlock(&lock_XY); 
-        double flt = atoi( (char*)str);
+        double flt = atof( (char*)str);
         double du = (flt / ROT_PER_METER);
         float locx = xAnt + (du * (float)cos(local_yaw));
         float locy = yAnt + (du * (float)sin(local_yaw)); // + sin.. for y growind downwords
@@ -87,5 +91,22 @@ float IMUEncoderPosition::yaw()
 
 void IMUEncoderPosition::update(Subject* subject)
 {
-    this->curent_yaw_rad = ((IMU*)subject)->yaw();
+    if (subject->className() == "IMU")
+    {
+        this->curent_yaw_rad = ((IMU*)subject)->yaw();
+    }
+    else if (subject->className() == "GPSConnection")
+    {
+        std::cout << "\t\tFromGPS" << std::endl;
+        this->x = ((GPSConnection*)subject)->position.getPosition().real()*100.0 + 27.0;
+        this->y = (double)521.5 - ((GPSConnection*)subject)->position.getPosition().imag()*100.0;
+
+        if (this->initial)
+        {
+            std::cout << "setare GPS: " << this->x << ", " << this->y << std::endl;
+            this->xAnt = this->x;
+            this->yAnt = this->y; 
+            this->initial = false;
+        }
+    }
 }

@@ -411,8 +411,8 @@ void moveCurveStartingPoint(Point &from,Point &to,float directionOfCurve,float c
 	
 }
 
-bool pointInsideCircle(Point p, Point origin) {
-	float R = 15; //wheelbase is 26.5 cm 
+bool pointInsideCircle(Point p, Point origin, float radius = 15) {
+	float R = radius; //wheelbase is 26.5 cm 
 	float dx = abs(p.x - origin.x);
 	float dy = abs(p.y - origin.y);
 

@@ -12,6 +12,7 @@ Image::Image(int width, int height, double exposure, int mode) :
     this->cap.set(cv::CAP_PROP_FRAME_WIDTH, width);
     this->cap.set(cv::CAP_PROP_FRAME_HEIGHT, height);
     this->cap.set(cv::CAP_PROP_EXPOSURE, exposure);
+    this->className_ = "Image";
 }
 
 Image::Image(std::string path_, int width, int height, int mode) :
@@ -21,6 +22,7 @@ Image::Image(std::string path_, int width, int height, int mode) :
     std::cout << path_ << std::endl;
     this->cap.set(cv::CAP_PROP_FRAME_WIDTH, width);
     this->cap.set(cv::CAP_PROP_FRAME_HEIGHT, height);
+    this->className_ = "Image";
     // cv::namedWindow("image");
     // cv::startWindowThread();
 }
@@ -34,6 +36,7 @@ Image::Image(const Image& img)
     this->exposure_ = img.exposure_;
     this->mode_ = img.mode_;
     this->frameNo_ = img.frameNo_;
+    this->className_ = img.className();
 }
 
 Image& Image::operator=(const Image& img)
@@ -45,6 +48,7 @@ Image& Image::operator=(const Image& img)
     this->exposure_ = img.exposure_;
     this->mode_ = img.mode_;
     this->frameNo_ = img.frameNo_;
+    this->className_ = img.className();
     return *this;
 }
 

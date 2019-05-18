@@ -13,6 +13,19 @@
 #include "pathplanningstate.h"
 #include "crossroadstate.h"
 
+#include "pathtracking.h"
+#include "positiondrive.h"
+#include "imu.h"
+#include "imuencoderposition.h"
+#include "image.h"
+#include "caffenetwork.h"
+
+#include "TrafficSignRecognition.h"
+#include "ObstacleDetection.h"
+
+#include "carcontrol.h"
+#include "gps.h"
+
 #include "timer.h"
 
 #ifndef FN_PTR
@@ -38,20 +51,36 @@ public:
     void runTask(FnPtr routine);
     void abortTask();
     void* run(void*);
+    void* switchState(void*);
+
+    CarControl carControl;
 
 private:
     FnPtr runningTask;
-
     State* currentState;
-
     states state;
-
     State* allStates[7];
 
+    PathTracking path;
+    PositionDrive drive;
+    IMU imu;
+    IMUEncoderPosition positionSystem;
+    Image img;
+    CaffeNetwork net;
+    TrafficSignRecognition trafficSign;
+    ObstacleDetection obstacleDetection;
+    
+
+    // GPS gps;
+    GPSConnection gps;
+
     Timer t;
+    Timer t1;
+    Timer t2;
 
     bool idle;
     bool cross;
+    bool exitCross;
     bool stopSign;
     bool exitStop;
     bool obstacle;
@@ -59,6 +88,7 @@ private:
     bool laneFollow;
     bool parkingSign;
     bool exitParking;
+    bool pathFinished;
 };
 
 #endif // BEHAVIOUR_TREE

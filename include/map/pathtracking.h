@@ -18,6 +18,8 @@
 #include "gpsconnection.h"
 #endif // GPSCONNECTION_H
 
+#include "imuencoderposition.h"
+
 class PathTracking : public IObserver
 {
 public:
@@ -67,6 +69,10 @@ public:
 
     int nextObstaclesNodes(const std::complex<double> position, int nodesNo, std::vector<std::complex<double> >& nodes);
 
+    void addToCrossRoad(const std::complex<double> position);
+
+    double distanceToCross();
+
     void update(Subject* subject) override;
 
     void run();
@@ -80,6 +86,8 @@ private:
     GPSData pathPosition_;
     double displ_;
     bool running;
+
+    std::vector<std::complex<double>> crossRoad;
 };
 
 #endif // PATHTRACKING_H

@@ -16,7 +16,7 @@ public:
 class Subject
 {
 public:
-    Subject()    {};
+    Subject()    { this->className_ = "Subject"; };
     ~Subject()   {};
     virtual void attachObserver(IObserver *o)    { observers.insert(o); }
     virtual void detachObserver(IObserver *o)    { observers.erase(o); }
@@ -27,9 +27,10 @@ public:
             o->update(this);
         }
     }
+    virtual std::string className()             { return this->className_; };
+    std::string className_;
 private:
     std::set<IObserver*> observers;
-
 };
 
 #endif // OBSERVER_H

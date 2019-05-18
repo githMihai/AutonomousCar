@@ -103,31 +103,82 @@ int PathTracking::nextObstaclesNodes(const std::complex<double> position, int no
         {
             return i;
         }
-        if (i == nodesNo - 1)
+        if (i >= nodesNo - 2)
         {
             nodes.push_back(vect[index + i]->coord());
         }
-        else
+        else if (i == nodesNo - 3)
         {
             if (e->direction(e->to()->coord()+e->normal()) > 0)
             {
-                nodes.push_back(vect[index + i]->coord() + e->normal()*0.225);
+                nodes.push_back(vect[index + i]->coord() + e->normal()*0.112);
             }
             else
             {
-                nodes.push_back(vect[index + i]->coord() + e->normal()*(-0.225));
+                nodes.push_back(vect[index + i]->coord() + e->normal()*(-0.112));
             }
+        }
+        else
+        {
+            std::complex<double> node;
+            if (e->direction(e->to()->coord()+e->normal()) > 0)
+            {
+                // nodes.push_back(vect[index + i]->coord() + e->normal()*0.225);
+                node = ((vect[index + i]->coord() + e->normal()*0.225) + nodes[i-1]);
+            }
+            else
+            {
+                // nodes.push_back(vect[index + i]->coord() + e->normal()*(-0.225));
+                node = ((vect[index + i]->coord() + e->normal()*(-0.225)) + nodes[i-1]);
+            }
+            nodes.push_back(std::complex<double>(node.real()/2.0, node.imag()/2.0));
         }
     }
     return nodesNo;
 }
 
-void PathTracking::update(Subject* gps)
+void PathTracking::addToCrossRoad(const std::complex<double> position)
 {
-    this->globalPosition_ = ((GPSConnection*)gps)->position;
+    this->crossRoad.push_back(position);
+}
+
+double PathTracking::distanceToCross()
+{
+    double min = 600.0;
+    for (std::complex<double> point : this->crossRoad)
+    {
+        double dist = sqrt(
+            (
+                point.real() - this->globalPosition_.getPosition().real()
+            )*(
+                point.real() - this->globalPosition_.getPosition().real()
+            ) 
+            + 
+            (
+                point.imag() - this->globalPosition_.getPosition().imag()
+            )*(
+                point.imag() - this->globalPosition_.getPosition().imag()
+            )
+        );
+        if (dist < min)
+        {
+            min = dist;
+        }
+    }
+    return min;
+}
+
+void PathTracking::update(Subject* /*gps*/ imuPos)
+{
+    // this->globalPosition_ = ((GPSConnection*)gps)->position;
+    // this->pathPosition_.update(this->path.pathPos(this->globalPosition_.getPosition()), this->path.pathPos(this->globalPosition_.getOrientation()));
+    // this->displ_ = this->path.displacement(this->globalPosition_.getPosition());
+    // std::cout << this->pathPosition_ << " displ: " << this->displ_ << std::endl;
+    float x = ((IMUEncoderPosition*)imuPos)->getX();
+    float y = ((IMUEncoderPosition*)imuPos)->getY();
+    this->globalPosition_ = GPSData(this->globalPosition_.getId(), std::complex<double>((x-27.0)/100.0, ((double)521.5-y)/100.0), this->globalPosition_.getOrientation());
     this->pathPosition_.update(this->path.pathPos(this->globalPosition_.getPosition()), this->path.pathPos(this->globalPosition_.getOrientation()));
     this->displ_ = this->path.displacement(this->globalPosition_.getPosition());
-    std::cout << this->pathPosition_ << " displ: " << this->displ_ << std::endl;
 } 
 
 void PathTracking::update(double x, double y)
