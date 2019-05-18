@@ -6,14 +6,16 @@
 Machine m;
 
 void interruptHandler(sig_t s){
+    m.gps.stop();
+    m.carControl.brake(0.0);
     m.carControl.close();
     exit(1); 
 }
 
-int main()
+int main(int argc, char **argv)
 {
     signal (SIGINT, interruptHandler);
-
+    m.waitForGPS = atoi(argv[1]);
     Timer t("machine", 50000, std::bind(&Machine::switchState, &m, (void*)(NULL)));
     t.start();
 

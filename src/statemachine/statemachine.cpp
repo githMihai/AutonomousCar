@@ -6,12 +6,13 @@ Machine::Machine() :    idle(true), cross(false), exitCross(false), stopSign(fal
                         pathFinished(false), stopCross(false), imu("/media/pi/PiDrive1/Holistic2_v4/master/lib/imu/","RTIMULib"),
                         positionSystem(NULL), carControl(), path("NOD1", "NOD134"), drive(NULL, &path),
                         net("resources/caffemodel/model_test_small.prototxt", "resources/caffemodel/CAR_iter_4000.caffemodel"),
+                        // net("resources/caffemodel/model.prototxt", "/media/pi/PiDrive1/Dataset/trained/CAR_iter_4000.caffemodel"),
                         trafficSign(), obstacleDetection(), 
                         // img("/media/pi/PiDrive1/Workspace/TraffisSign/imgtovid.avi"),
                         // img("/media/pi/PiDrive1/Workspace/output_1555424602.779776.avi"),
-                        img(),
+                        img(), waitForGPS(false),
                         t("image", 50000, std::bind(&Image::nextFrame, &img, (void*)(NULL))),
-                        t1("sign", 500000, std::bind(&TrafficSignRecognition::trafficSignInImageA, &trafficSign, (void*)(NULL))),
+                        t1("sign", 100000, std::bind(&TrafficSignRecognition::trafficSignInImageA, &trafficSign, (void*)(NULL))),
                         t2("obstacle", 50000, std::bind(&ObstacleDetection::detectByGreenThresholdNoTransform, &obstacleDetection, (void*)(NULL))), gps(4, 12346)
 {
     // std::shared_ptr<State> idleState = std::shared_ptr<IdleState>();
@@ -38,10 +39,13 @@ Machine::Machine() :    idle(true), cross(false), exitCross(false), stopSign(fal
     this->allStates[OVERTAKE] = overtake;
     this->allStates[PARKING] = parking;
 
-    path.addToCrossRoad(std::complex<double>(3.825, 2.475));
-    path.addToCrossRoad(std::complex<double>(1.125, 4.725));
-    path.addToCrossRoad(std::complex<double>(1.125, 2.475));
-    path.addToCrossRoad(std::complex<double>(3.825, 0.225));
+    {
+        std::lock_guard<std::mutex> lock(this->crossLock);
+        path.addToCrossRoad(std::complex<double>(3.825, 2.475));
+        path.addToCrossRoad(std::complex<double>(1.125, 4.725));
+        path.addToCrossRoad(std::complex<double>(1.125, 2.475));
+        path.addToCrossRoad(std::complex<double>(3.825, 0.225));
+    }
 
     gps.start();
     sleep(4.0);
@@ -88,7 +92,7 @@ void* Machine::switchState(void*)
         {
             stopCross = true;
         }
-        if (path.distanceToGoal() < 0.1)
+        if (path.distanceToGoal() < 0.2)
         {
             parkingSign = true;
         }
@@ -110,7 +114,7 @@ void* Machine::switchState(void*)
             case IDLE:
             {
                 // currentState = this->allStates[IDLE];
-                state = PATH_PLANNING;
+                // state = PATH_PLANNING;
                 break;
             }
             case PATH_PLANNING:
@@ -206,6 +210,11 @@ void* Machine::run(void*)
                 sleep(2.0);
                 carControl.enablePID();
                 sleep(2.0);
+                while (gps.position.getPosition() == std::complex<double>(0,0) && this->waitForGPS)
+                {
+                    sleep(0.2);
+                }
+                state = LANE_FOLLOW;
                 break;
             }
             case PATH_PLANNING:
@@ -256,7 +265,13 @@ void* Machine::run(void*)
                     exitStop = false;
                     drive.done = false;
                     stopCross = false;
-                    path.crossRoad.erase(path.crossRoad.begin() + path.crossIndex, path.crossRoad.begin() + path.crossIndex + 1);
+                    if (path.crossRoad.size() > path.crossIndex + 1)
+                    {
+                        {
+                            std::lock_guard<std::mutex> lock(this->crossLock);
+                            path.crossRoad.erase(path.crossRoad.begin() + path.crossIndex, path.crossRoad.begin() + path.crossIndex + 1);
+                        }
+                    }
                 }
                 break;
             }
@@ -281,12 +296,15 @@ void* Machine::run(void*)
                     // TODO: parking
                     carControl.brake(0.0);
                     sleep(1.0);
-                    path = PathTracking("NOD134", "NOD0");
-                    path.addToCrossRoad(std::complex<double>(3.825, 2.475));
-                    path.addToCrossRoad(std::complex<double>(1.125, 4.725));
-                    path.addToCrossRoad(std::complex<double>(1.125, 2.475));
-                    path.addToCrossRoad(std::complex<double>(3.825, 0.225));
-                    exitParking = true;
+                    path = PathTracking("NOD76", "NOD0");
+                    {
+                        std::lock_guard<std::mutex> lock(this->crossLock);
+                        path.addToCrossRoad(std::complex<double>(3.825, 2.475));
+                        path.addToCrossRoad(std::complex<double>(1.125, 4.725));
+                        path.addToCrossRoad(std::complex<double>(1.125, 2.475));
+                        path.addToCrossRoad(std::complex<double>(3.825, 0.225));
+                        exitParking = true;
+                    }
                 }
                 break;
             }
@@ -306,7 +324,7 @@ void* Machine::run(void*)
                         carControl.move(0.2, drive.angle);
                         // pthread_mutex_unlock(&drive.lock_angle);
                         drive.nsleep(100);
-                        std::cout << "Sleep" << std::endl;
+                        // std::cout << "Sleep" << std::endl;
                     }
                     // pthread_mutex_unlock(&drive.lock_angle);
                     driveThread.join();
@@ -335,6 +353,7 @@ void* Machine::run(void*)
                     //     std::cout << "LANE with margin: " << dir*23.0 << std::endl;
                     // }
                     // else
+                    std::cout << "\t\tDistToPark: " << path.distanceToGoal() << std::endl;
                     {
                         std::cout << "LANE: " << 23.0*(2.0*net.infer()-1.0) << std::endl;
                         carControl.move(0.2, 23.0*(2.0*net.infer()-1.0));

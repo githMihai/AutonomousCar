@@ -85,7 +85,10 @@ void* Image::nextFrame(void*)
         // cv::imshow("image", this->frame_); 
         // cv::waitKey();
         // QThread::msleep(40);
-        this->notifyObservers();
+        if (this->frame_.rows == 480 && this->frame_.cols == 640)
+        {
+            this->notifyObservers();
+        }
     }
     else                        { throw std::system_error(-1, std::generic_category(), "VideoCapture not opened."); }
 }
@@ -105,7 +108,7 @@ cv::Mat Image::getROI(const int& x, const int& y, const int& roiWidth, const int
     {
         std::cout << "x: " << x << " y: " << y << " roiWidth: " << roiWidth << " width: " << width_ << 
         " roiHeight: " << roiHeight <<  " height: " << height_ << " x + roiWidth: " << x + roiWidth << " y + roiHeight: " << y + roiHeight << std::endl;
-        throw std::system_error(-1, std::generic_category(), "ROI out of bound.");
+        // throw std::system_error(-1, std::generic_category(), "ROI out of bound.");
     }
     
 }

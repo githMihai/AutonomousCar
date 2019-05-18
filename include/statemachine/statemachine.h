@@ -2,6 +2,7 @@
 #define BEHAVIOUR_TREE
 
 #include <functional>
+#include <mutex>
 
 #include "observer.h"
 #include "state.h"
@@ -54,7 +55,9 @@ public:
     void* switchState(void*);
 
     CarControl carControl;
-
+    
+    bool waitForGPS;
+    GPSConnection gps;
 private:
     FnPtr runningTask;
     State* currentState;
@@ -69,10 +72,11 @@ private:
     CaffeNetwork net;
     TrafficSignRecognition trafficSign;
     ObstacleDetection obstacleDetection;
-    
+
+    std::mutex crossLock;
 
     // GPS gps;
-    GPSConnection gps;
+    // GPSConnection gps;
 
     Timer t;
     Timer t1;

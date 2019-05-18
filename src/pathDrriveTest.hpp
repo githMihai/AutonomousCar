@@ -249,6 +249,84 @@ void distanceAnglePointToVector(float curentPointX, float curentPointY, Point va
 }
 
 
+// float angleAndDirectionOfPoints2(float fx,float fy,float tx,float ty, float curentAngle,float &angleToPoint,float &distance) {
+// 	//var w = x2 - x1;
+// 	//var h = y2 - y1;
+
+// 	//var atan = Math.Atan(h / w) / Math.PI * 180;
+// 	//if (w < 0 && h <= 0)
+// 	//	atan -= 180;
+// 	//if (w < 0 && h > 0)
+// 	//	atan += 180;
+// 	//return (atan) % 360;
+// 	float dy = ty - fy;
+// 	float dx = tx - fx;
+// 	distance = sqrt(dx*dx + dy*dy);
+// 	float x = (atan(dy / dx) / PI * 180);
+
+// 	if (dx < 0 && dy <= 0)
+// 		x -= 180;
+// 	if (dx < 0 && dy > 0)
+// 		x += 180;
+// 	x = fmod(x, 360.0);
+// 	float sign = 0;
+// 	float comp = copysign(sign, x);
+
+
+// 	//angles above x must be negative from 0-180 counter clockwise
+// 	//angle bellow x must be negative from 0-180 clockwise
+
+// 	//quad IV 
+// 	if (curentAngle <= 90.0 && curentAngle >= 0) {
+// 		//printf("quad IV curent angle: %f x:%f \n",curentAngle,x);
+// 		x = fmod(curentAngle - (x), 360.0);
+// 		x = -x;
+// 		if (abs(x) > 180) {
+// 			x = abs(x) - 90;
+// 			//x = -x;
+
+// 		}
+
+// 	}
+// 	//quad II
+// 	else if (curentAngle < -90.0) {
+// 		//printf("quad II curent angle: %f x:%f \n",curentAngle,x);
+// 		x = fmod(curentAngle - (x), 360.0);
+// 		//printf("quad II after mod x:%f \n",curentAngle,x);
+// 		x = -x;
+// 		if (abs(x) > 180) {
+// 			x = x - 360;
+// 		}
+// 		//printf("quad II final x:%f \n",x);
+// 	}
+// 	//quad III
+// 	else if (curentAngle > 90) {
+// 		//printf("quad III curent angle: %f x:%f \n",curentAngle,x);
+// 		x = fmod(curentAngle - (x), 360.0);
+		
+// 		if (abs(x) > 180) {
+// 			x = x - 360;
+// 		}
+// 		x = -x; // todo ivnerse sign
+// 		x = fmod(x, 360.0);
+// 	}
+// 	//quad I
+// 	else if (curentAngle < 0 && curentAngle >= -90) {
+// 		//printf("quad I curent angle: %f x:%f \n",curentAngle,x);
+// 		x = fmod(curentAngle - (x), 360.0);
+// 		x = -x;
+// 		if (x > 180) {
+// 			x = x - 90;
+// 			x = -x;
+// 		}
+
+// 	}
+
+
+// 	angleToPoint = x;
+// 	return x;
+
+// }
 float angleAndDirectionOfPoints2(float fx,float fy,float tx,float ty, float curentAngle,float &angleToPoint,float &distance) {
 	//var w = x2 - x1;
 	//var h = y2 - y1;

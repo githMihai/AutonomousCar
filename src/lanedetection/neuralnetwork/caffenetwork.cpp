@@ -142,6 +142,8 @@ void CaffeNetwork::update(Subject* imageObj)
     {
         this->image = ((Image*)imageObj)->getROI(0, 144, 640, 256);
         cv::resize(this->image, this->image, cv::Size(80, 32));
+        // this->image = ((Image*)imageObj)->getROI(0, 210, 640, 256);
+        // cv::resize(this->image, this->image, cv::Size(120, 48));
     }
     // cv::imshow("image", this->image);
     // cv::waitKey();

@@ -10,7 +10,7 @@ VideoWriter videoResult("result1.avi", CV_FOURCC('M', 'J', 'P', 'G'), 20, Size(6
 
 
 
-TrafficSignRecognition::TrafficSignRecognition()
+TrafficSignRecognition::TrafficSignRecognition() : image(Mat(0,0,CV_8UC3))
 {
 
 	hog = HOGDescriptor (
@@ -73,9 +73,13 @@ void TrafficSignRecognition::trafficSignInImage(Mat src, bool &parkingSign,bool 
 
 void* TrafficSignRecognition::trafficSignInImageA(void* notUsed)
 {		
-	while (true)
+	// while (true)
 	{
+		if (this->image.rows == 480 && this->image.cols == 640)
+	{
+		if(bigRoi.rect.width < (this->image.cols + bigRoi.rect.x) && bigRoi.rect.height < (this->image.rows + bigRoi.rect.y)){
 		CapturedImage capImg;
+		
 		capImg.src = this->image(bigRoi.rect);
 		//capImg.filePath = imagePath;
 		//capImg.roi = bigRoi.rect;
@@ -95,7 +99,11 @@ void* TrafficSignRecognition::trafficSignInImageA(void* notUsed)
 		vector<Rect> overlappingRectanglesParkingSign;
 		//just stop sign
 		groupOverlappingRectangles(capImg, preditionResults, overlappingRectanglesStopSign, overlappingRectanglesParkingSign,parkingSignBool,stopSignBool);
-		sleep(0.3);
+
+		std::cout << "Detection: stop: " << stopSignBool << std::endl;
+		// sleep(0.3);
+		}
+	}
 	}
 	
 }

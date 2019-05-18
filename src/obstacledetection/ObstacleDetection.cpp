@@ -2,15 +2,15 @@
 #include "image.h"
 
 
-ObstacleDetection::ObstacleDetection() : obstacleVal(false)
+ObstacleDetection::ObstacleDetection() : obstacleVal(false), image(Mat(0,0,CV_8UC3))
 {
 }
 
-ObstacleDetection::ObstacleDetection(float proportionOfColorInImage)
+ObstacleDetection::ObstacleDetection(float proportionOfColorInImage) : obstacleVal(false), image(Mat(0,0,CV_8UC3))
 {
 }
 
-ObstacleDetection::ObstacleDetection(Rect roi, float proportionOfColorInImage)
+ObstacleDetection::ObstacleDetection(Rect roi, float proportionOfColorInImage) : obstacleVal(false), image(Mat(0,0,CV_8UC3))
 {
 }
 
@@ -59,8 +59,9 @@ void* ObstacleDetection::detectByGreenThresholdNoTransform(void* notUsed)
 {
 	// bool obstacle = false;
 	obstacleVal = false;
-	if (this->image.rows == 480)
+	if (this->image.rows == 480 && this->image.cols == 640)
 	{
+		if(cropObstacle.width < (this->image.cols + cropObstacle.x) && cropObstacle.height < (this->image.rows + cropObstacle.y)){
 		Mat croppedSrc = this->image(cropObstacle);
 		Mat thresholded_image;
 		segmentGreenObjects(croppedSrc, thresholded_image);
@@ -78,6 +79,7 @@ void* ObstacleDetection::detectByGreenThresholdNoTransform(void* notUsed)
 		//imshow("src", src);
 		//waitKey(0);
 		// return obstacle;
+		}
 	}
 }
 

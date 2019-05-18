@@ -23,7 +23,7 @@ public:
      * \param exposure  default: 0.01
      * \param mode      default: CV_LOAD_IMAGE_COLOR
      */
-    Image(int width=640, int height=480, double exposure=1.0/100.0, int mode=CV_LOAD_IMAGE_COLOR);
+    Image(int width=640, int height=480, double exposure=3.0/100.0, int mode=CV_LOAD_IMAGE_COLOR);
 
     /*!
      * \name Image
