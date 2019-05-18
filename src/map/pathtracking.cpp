@@ -14,7 +14,7 @@
 
 PathTracking::PathTracking(std::complex<double> startingNode, std::complex<double> destinationNode) :
     path(Path(Map::getInstance()[startingNode][0], Map::getInstance()[destinationNode][0])),
-    running(true),
+    running(true), crossIndex(0),
     displ_(0.0)  
     {
         this->globalPosition_ = GPSData(CAR_ID, this->path.getNodesInPath()[0]->coord(), std::complex<double>(0,0));
@@ -23,7 +23,7 @@ PathTracking::PathTracking(std::complex<double> startingNode, std::complex<doubl
 
 PathTracking::PathTracking(const std::string startingNode, const std::string destinationNode) :
     path(Path(Map::getInstance().nodePointer(startingNode), Map::getInstance().nodePointer(destinationNode))),
-    running(true),
+    running(true), crossIndex(0),
     displ_(0.0)  
     {
         this->globalPosition_ = GPSData(CAR_ID, this->path.getNodesInPath()[0]->coord(), std::complex<double>(0,0));
@@ -145,8 +145,10 @@ void PathTracking::addToCrossRoad(const std::complex<double> position)
 double PathTracking::distanceToCross()
 {
     double min = 600.0;
-    for (std::complex<double> point : this->crossRoad)
+    for (int index = 0; index < this->crossRoad.size(); index++)
+    // for (std::complex<double> point : this->crossRoad)
     {
+        std::complex<double> point = this->crossRoad.at(index);
         double dist = sqrt(
             (
                 point.real() - this->globalPosition_.getPosition().real()
@@ -163,9 +165,29 @@ double PathTracking::distanceToCross()
         if (dist < min)
         {
             min = dist;
+            this->crossIndex = index;
         }
     }
     return min;
+}
+
+double PathTracking::distanceToGoal()
+{
+    std::complex<double> point = this->path.destination()->coord();
+    double dist = sqrt(
+        (
+            point.real() - this->globalPosition_.getPosition().real()
+        )*(
+            point.real() - this->globalPosition_.getPosition().real()
+        ) 
+        + 
+        (
+            point.imag() - this->globalPosition_.getPosition().imag()
+        )*(
+            point.imag() - this->globalPosition_.getPosition().imag()
+        )
+    );
+    return dist;
 }
 
 void PathTracking::update(Subject* /*gps*/ imuPos)

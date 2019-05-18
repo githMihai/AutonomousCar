@@ -82,6 +82,7 @@ private:
     bool cross;
     bool exitCross;
     bool stopSign;
+    bool stopCross;
     bool exitStop;
     bool obstacle;
     bool exitObstacle;

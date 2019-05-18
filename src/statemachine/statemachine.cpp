@@ -3,7 +3,7 @@
 Machine::Machine() :    idle(true), cross(false), exitCross(false), stopSign(false), 
                         exitStop(false), obstacle(false), exitObstacle(false), 
                         laneFollow(false), parkingSign(false), exitParking(false),
-                        pathFinished(false), imu("/media/pi/PiDrive1/Holistic2_v4/master/lib/imu/","RTIMULib"),
+                        pathFinished(false), stopCross(false), imu("/media/pi/PiDrive1/Holistic2_v4/master/lib/imu/","RTIMULib"),
                         positionSystem(NULL), carControl(), path("NOD1", "NOD134"), drive(NULL, &path),
                         net("resources/caffemodel/model_test_small.prototxt", "resources/caffemodel/CAR_iter_4000.caffemodel"),
                         trafficSign(), obstacleDetection(), 
@@ -72,8 +72,10 @@ void* Machine::switchState(void*)
     // while (true)
     {
         stopSign = trafficSign.stopSignBool;
-        parkingSign = trafficSign.parkingSignBool;
+        // parkingSign = trafficSign.parkingSignBool;
         obstacle = obstacleDetection.obstacleVal;
+        // std::cout << "\t\t\t\tDIST_CROSS: " << path.distanceToCross() << std::endl;
+        // std::cout << "\t\tDistToGoal: " << path.distanceToCross() << std::endl;
         if (path.distanceToCross() <= 1.0)
         {
             cross = true;
@@ -81,6 +83,18 @@ void* Machine::switchState(void*)
         else
         {
             cross = false;
+        }
+        if (stopSign)
+        {
+            stopCross = true;
+        }
+        if (path.distanceToGoal() < 0.1)
+        {
+            parkingSign = true;
+        }
+        else
+        {
+            parkingSign = false;
         }
 
         // if (stopSign)
@@ -103,8 +117,8 @@ void* Machine::switchState(void*)
             {       
                 if (cross &&
                     !exitCross)         { state = CROSSROAD; }
-                else if (stopSign &&
-                        !exitStop)      { state = STOP; }
+                // else if (stopSign &&
+                //         !exitStop)      { state = STOP; }
                 else if (obstacle &&
                         !exitObstacle)  { state = OVERTAKE; }
                 else if (parkingSign &&
@@ -116,28 +130,30 @@ void* Machine::switchState(void*)
             }
             case CROSSROAD:
             {
-                // if (exitCross)          { state = LANE_FOLLOW; }
+                if (exitCross)          { state = LANE_FOLLOW; }
+                else                    { state = CROSSROAD; }
                 // else if (   stopSign &&
                 //             !exitStop)  { state = STOP; }
                 // else                    { state = CROSSROAD; }
-                if (   stopSign &&
-                        !exitStop)  { state = STOP; }
-                else                { state = LANE_FOLLOW; }
+                // if (   stopSign &&
+                //         !exitStop)  { state = STOP; }
+                // else                { state = LANE_FOLLOW; }
+                // state = LANE_FOLLOW;
                 break;
             }
-            case STOP:
-            {
-                // drive.done = true;
-                if (exitStop)           { state = CROSSROAD; } // TODO: comm
-                // else                    { state = STOP; }
-                // state = CROSSROAD; // TODO: uncomm
-                break;
-            }
+            // case STOP:
+            // {
+            //     // drive.done = true;
+            //     if (exitStop)           { state = CROSSROAD; } // TODO: comm
+            //     // else                    { state = STOP; }
+            //     // state = CROSSROAD; // TODO: uncomm
+            //     break;
+            // }
             case LANE_FOLLOW:
             {
-                if (stopSign &&
-                    !exitStop)          { state = STOP; }
-                else if (parkingSign &&
+                // if (stopSign &&
+                //     !exitStop)          { state = STOP; }
+                if (parkingSign &&
                         !exitParking)   { state = PARKING; }
                 else if (obstacle &&
                         !exitObstacle)  { state = OVERTAKE; }
@@ -153,8 +169,8 @@ void* Machine::switchState(void*)
                         !exitCross)     { state = CROSSROAD; }
                 else if (parkingSign &&
                         !exitParking)   { state = PARKING; }
-                else if (stopSign &&
-                        !exitStop)      { state = STOP; }
+                // else if (stopSign &&
+                //         !exitStop)      { state = STOP; }
                 else                    { state = OVERTAKE; }
                 break;
             }
@@ -205,6 +221,12 @@ void* Machine::run(void*)
                 std::cout << "exit_cross: " << exitCross << std::endl;
                 if (!exitCross)
                 {
+                    if (stopCross)
+                    {
+                        carControl.brake(0.0);
+                        sleep(2.0);
+                    }
+                    stopCross = false;
                     std::cout << "CROSSROAD " << std::endl;
                     exitCross = false;
                     std::thread driveThread(&PositionDrive::drivePoints, &drive, 6);
@@ -231,21 +253,23 @@ void* Machine::run(void*)
                     exitCross = true;
                     exitStop = false;
                     drive.done = false;
+                    stopCross = false;
+                    path.crossRoad.erase(path.crossRoad.begin() + path.crossIndex, path.crossRoad.begin() + path.crossIndex + 1);
                 }
                 break;
             }
-            case STOP:
-            {
-                // if (!exitStop)
-                {
-                    std::cout << "STOP " << std::endl;
-                    exitStop = false;
-                    carControl.brake(0.0);
-                    sleep(2.0);
-                    exitStop = true;
-                }
-                break;
-            }
+            // case STOP:
+            // {
+            //     // if (!exitStop)
+            //     {
+            //         std::cout << "STOP " << std::endl;
+            //         exitStop = false;
+            //         carControl.brake(0.0);
+            //         sleep(2.0);
+            //         exitStop = true;
+            //     }
+            //     break;
+            // }
             case PARKING:
             {
                 if (!exitParking)
@@ -290,17 +314,30 @@ void* Machine::run(void*)
             }
             case LANE_FOLLOW:
             {
+                exitCross = false;
                 std::cout << "LANE " << std::endl;
                 while (state == LANE_FOLLOW)
                 {
-                    std::cout << "LANE: " << 23.0*(2.0*net.infer()-1.0) << std::endl;
-                    carControl.move(0.2, 23.0*(2.0*net.infer()-1.0));
+                    std::cout << "\t\t\t\tDIST_CROSS: " << path.distanceToCross() << std::endl;
+                    std::cout << "\t\t\tLANE_DIST: " << path.displacement() << std::endl;
+                    float dir = -1 ? (path.displacement() < 0) : 1;
+                    if (abs(path.displacement()) > 1.5)
+                    {
+                        carControl.move(0.2, dir*23.0);
+                        std::cout << "LANE with margin: " << dir*23.0 << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "LANE: " << 23.0*(2.0*net.infer()-1.0) << std::endl;
+                        carControl.move(0.2, 23.0*(2.0*net.infer()-1.0));
+                        sleep(0.07);
+                    }
                 }
                 exitStop = false;
                 exitParking = false;
                 exitObstacle = false;
                 exitCross = false;
-                std::cout << "exit_cross from Lane: " << exitCross << std::endl;
+                // std::cout << "exit_cross from Lane: " << exitCross << std::endl;
                 break;
             }
         }

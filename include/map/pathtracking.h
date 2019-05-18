@@ -73,6 +73,8 @@ public:
 
     double distanceToCross();
 
+    double distanceToGoal();
+
     void update(Subject* subject) override;
 
     void run();
@@ -80,14 +82,16 @@ public:
     // TODO: temporary
     void update(double x, double y);
 
+    std::vector<std::complex<double>> crossRoad;
+
+    int crossIndex;
+
 private:
     Path path;
     GPSData globalPosition_;
     GPSData pathPosition_;
     double displ_;
     bool running;
-
-    std::vector<std::complex<double>> crossRoad;
 };
 
 #endif // PATHTRACKING_H
